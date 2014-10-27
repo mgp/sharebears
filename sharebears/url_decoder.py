@@ -10,10 +10,12 @@ class UrlDecoderException(Exception):
 
 
 class UrlDecoder:
-  def name(self):
+  @staticmethod
+  def name():
     raise NotImplementedError
 
-  def is_decodeable_url(self, url, parsed_url):
+  @staticmethod
+  def is_decodeable_url(url, parsed_url):
     raise NotImplementedError
 
   def decode_url(self, url, parsed_url):

@@ -5,7 +5,8 @@ from url_decoder import UrlDecoder, UrlDecoderException
 
 
 class _GitHubUrlDecoder(UrlDecoder):
-  def is_decodeable_url(self, url, parsed_url):
+  @staticmethod
+  def is_decodeable_url(url, parsed_url):
     if not parsed_url.netloc.startswith("github."):
       return False
     return True
@@ -19,16 +20,19 @@ class GitHubRepositoryUrlDecoder(_GitHubUrlDecoder):
   def __init__(self, github_client):
     self.github_client = github_client
 
-  def name(self):
+  @staticmethod
+  def name():
     return "github-repository"
 
-  def _match_parsed_url(self, parsed_url):
+  @staticmethod
+  def _match_parsed_url(parsed_url):
     return GitHubRepositoryUrlDecoder._PATH_REGEX.match(parsed_url.path)
 
-  def is_decodeable_url(self, url, parsed_url):
-    if not _GitHubUrlDecoder.is_decodeable_url(self, url, parsed_url):
+  @staticmethod
+  def is_decodeable_url(url, parsed_url):
+    if not _GitHubUrlDecoder.is_decodeable_url(url, parsed_url):
       return False
-    elif not self._match_parsed_url(parsed_url):
+    elif not GitHubRepositoryUrlDecoder._match_parsed_url(parsed_url):
       return False
     return True
 
@@ -76,16 +80,19 @@ class GitHubCommitUrlDecoder(_GitHubUrlDecoder):
   def __init__(self, github_client):
     self.github_client = github_client
 
-  def name(self):
+  @staticmethod
+  def name():
     return "github-commit"
 
-  def _match_parsed_url(self, parsed_url):
+  @staticmethod
+  def _match_parsed_url(parsed_url):
     return GitHubCommitUrlDecoder._PATH_REGEX.match(parsed_url.path)
 
-  def is_decodeable_url(self, url, parsed_url):
-    if not _GitHubUrlDecoder.is_decodeable_url(self, url, parsed_url):
+  @staticmethod
+  def is_decodeable_url(url, parsed_url):
+    if not _GitHubUrlDecoder.is_decodeable_url(url, parsed_url):
       return False
-    elif not self._match_parsed_url(parsed_url):
+    elif not GitHubCommitUrlDecoder._match_parsed_url(parsed_url):
       return False
     return True
 
@@ -119,10 +126,12 @@ class GitHubGistUrlDecoder(UrlDecoder):
 
   _PATH_REGEX = re.compile("^/\w+/\w+$")
 
-  def name(self):
+  @staticmethod
+  def name():
     return "github-gist"
 
-  def is_decodeable_url(self, url, parsed_url):
+  @staticmethod
+  def is_decodeable_url(url, parsed_url):
     if not parsed_url.netloc.startswith("gist.github."):
       return False
     elif not GitHubGistUrlDecoder._PATH_REGEX.match(parsed_url.path):

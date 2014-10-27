@@ -8,10 +8,12 @@ class YouTubeUrlDecoder(UrlDecoder):
 
   _QUERY_REGEX = re.compile("^v=\w+$")
 
-  def name(self):
+  @staticmethod
+  def name():
     return "youtube"
 
-  def is_decodeable_url(self, url, parsed_url):
+  @staticmethod
+  def is_decodeable_url(url, parsed_url):
     if not parsed_url.netloc.startswith("www.youtube."):
       return False
     elif parsed_url.path != "/watch":

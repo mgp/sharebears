@@ -5,10 +5,12 @@ from url_decoder import UrlDecoder, UrlDecoderException
 class ImageUrlDecoder(UrlDecoder):
   """Embeds an image."""
 
-  def name(self):
+  @staticmethod
+  def name():
     return "image"
 
-  def is_decodeable_url(self, url, parsed_url):
+  @staticmethod
+  def is_decodeable_url(url, parsed_url):
     parsed_path = parsed_url.path
     return (parsed_path.endswith(".jpeg") or
         parsed_path.endswith(".jpg") or
