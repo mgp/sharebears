@@ -2,6 +2,8 @@ from url_decoder import UrlDecoder
 
 
 class YouTubeUrlDecoder(UrlDecoder):
+  """Embeds a YouTube video."""
+
   def name(self):
     return "youtube"
 
