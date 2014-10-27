@@ -1,5 +1,6 @@
 import unittest
 
+import filters_test
 import parser_test
 import url_decoder_github_test
 import url_decoder_image_test
@@ -10,6 +11,7 @@ import url_decoder_youtube_test
 
 def suite():
   suite = unittest.TestSuite()
+  suite.addTest(filters_test.suite())
   suite.addTest(parser_test.suite())
   suite.addTest(url_decoder_github_test.suite())
   suite.addTest(url_decoder_image_test.suite())

@@ -9,6 +9,12 @@ class UrlDecoderException(Exception):
     return str(self.reason)
 
 
+class RenderableUrl:
+  def __init__(self, decoder_name, value):
+    self.decoder_name = decoder_name
+    self.value = value
+
+
 class UrlDecoder:
   @staticmethod
   def name():
