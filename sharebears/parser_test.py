@@ -1,4 +1,4 @@
-from unittest import TestCase
+import unittest
 
 import parser
 
@@ -11,9 +11,9 @@ class _ParserTestDecoder:
     return url.startswith(self.matched_url_prefix)
 
 
-class ParserTest(TestCase):
+class ParserTest(unittest.TestCase):
   def setUp(self):
-    TestCase.setUp(self)
+    unittest.TestCase.setUp(self)
 
     self.decoder0 = _ParserTestDecoder("http://decoder0")
     self.decoder1 = _ParserTestDecoder("http://decoder1")
@@ -118,4 +118,10 @@ class ParserTest(TestCase):
     self._assert_url_token(tokens[0], "http://url0")
     self._assert_text_token(tokens[1], "text1")
     self._assert_url_token(tokens[2], "http://url2")
+
+
+def suite():
+  suite = unittest.TestSuite()
+  suite.addTest(unittest.makeSuite(ParserTest))
+  return suite
 

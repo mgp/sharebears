@@ -1,3 +1,5 @@
+import unittest
+
 from url_decoder_test import UrlDecoderTestCase
 from url_decoder_youtube import YouTubeUrlDecoder
 
@@ -29,4 +31,10 @@ class YouTubeUrlDecoderTest(UrlDecoderTestCase):
     parsed_url = self._parse_url(url)
     expected_dict = { "url": url }
     self.assertDictEqual(expected_dict, self.url_decoder.decode_url(url, parsed_url))
+
+
+def suite():
+  suite = unittest.TestSuite()
+  suite.addTest(unittest.makeSuite(YouTubeUrlDecoderTest))
+  return suite
 
