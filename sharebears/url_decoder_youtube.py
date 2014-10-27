@@ -1,14 +1,24 @@
+import re
+
 from url_decoder import UrlDecoder
 
 
 class YouTubeUrlDecoder(UrlDecoder):
   """Embeds a YouTube video."""
 
+  _QUERY_REGEX = re.compile("^v=\w+$")
+
   def name(self):
     return "youtube"
 
   def is_decodeable_url(self, url, parsed_url):
-    return parsed_url.netloc.startswith("www.youtube.")
+    if not parsed_url.netloc.startswith("www.youtube."):
+      return False
+    elif parsed_url.path != "/watch":
+      return False
+    elif not YouTubeUrlDecoder._QUERY_REGEX.match(parsed_url.query):
+      return False
+    return True
 
   def decode_url(self, url, parsed_url):
     # Use an embedded video player.
