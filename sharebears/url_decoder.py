@@ -26,5 +26,5 @@ class UrlDecoder:
 def filter_json(json, *keys):
   """Returns the given JSON but with only the given keys."""
 
-  return {key: json[key] for key in keys}
+  return {key: json[key] for key in keys if key in json}
 

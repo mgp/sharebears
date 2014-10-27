@@ -1,6 +1,8 @@
 from unittest import TestCase
 import urlparse
 
+import url_decoder
+
 
 class UrlDecoderTestCase(TestCase):
   """Base class for testing UrlDecoder instances."""
@@ -11,4 +13,12 @@ class UrlDecoderTestCase(TestCase):
   def _is_decodeable_url(self, decoder, url):
     parsed_url = self._parse_url(url)
     return decoder.is_decodeable_url(url, parsed_url)
+
+
+class FilterJsonTestCase(TestCase):
+  def test_filter_json(self):
+    json = { "cat": "meow", "dog": "woof", "cow": "moo" }
+    filtered_json = url_decoder.filter_json(json, "cat", "dog", "flamingo")
+    expected_json = { "cat": "meow", "dog": "woof" }
+    self.assertDictEqual(expected_json, filtered_json)
 
