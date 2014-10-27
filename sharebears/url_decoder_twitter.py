@@ -1,3 +1,5 @@
+import re
+
 from url_decoder import UrlDecoder
 
 
@@ -11,13 +13,13 @@ class _TwitterUrlDecoder(UrlDecoder):
 class TwitterTimelineUrlDecoder(_TwitterUrlDecoder):
   """Embeds the timeline of a Twitter user."""
 
-  _PATH_REGEX = re.compile("^\w+$")
+  _PATH_REGEX = re.compile("^/\w+$")
 
   def name(self):
     return "twitter-timeline"
 
   def is_decodeable_url(self, url, parsed_url):
-    if not TwitterUrlDecoder.is_decodeable_url(self, url, parsed_url):
+    if not _TwitterUrlDecoder.is_decodeable_url(self, url, parsed_url):
       return False
     elif not TwitterTimelineUrlDecoder._PATH_REGEX.match(parsed_url.path):
       return False
@@ -36,13 +38,13 @@ class TwitterTimelineUrlDecoder(_TwitterUrlDecoder):
 class TwitterTweetUrlDecoder(_TwitterUrlDecoder):
   """Embeds a tweet by a Twitter user."""
 
-  _PATH_REGEX = re.compile("^\w+/status/\w+$")
+  _PATH_REGEX = re.compile("^/\w+/status/\w+$")
 
   def name(self):
     return "twitter-tweet"
 
   def is_decodeable_url(self, url, parsed_url):
-    if not TwitterUrlDecoder.is_decodeable_url(self, url, parsed_url):
+    if not _TwitterUrlDecoder.is_decodeable_url(self, url, parsed_url):
       return False
     elif not TwitterTweetUrlDecoder._PATH_REGEX.match(parsed_url.path):
       return False

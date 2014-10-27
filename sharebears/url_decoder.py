@@ -16,7 +16,7 @@ class UrlDecoder:
   def is_decodeable_url(self, url, parsed_url):
     raise NotImplementedError
 
-  def decode_url(self, url, parsed_url)
+  def decode_url(self, url, parsed_url):
     raise NotImplementedError
 
   def render_decoded_url(self, decoded_url):
