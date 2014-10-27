@@ -1,6 +1,7 @@
 import re
 
-from url_decoder import UrlDecoder, UrlDecoderException, filter_json
+import url_decoder
+from url_decoder import UrlDecoder, UrlDecoderException
 
 
 class _GitHubUrlDecoder(UrlDecoder):
@@ -36,10 +37,11 @@ class GitHubRepositoryUrlDecoder(_GitHubUrlDecoder):
 
     # Filter the repository owner.
     owner_json = json["owner"]
-    filtered_owner_json = filter_json(owner_json, "login", "avatar_url", "html_url")
+    filtered_owner_json = url_decoder.filter_json(owner_json,
+        "login", "avatar_url", "html_url")
 
     # Filter the repository.
-    filtered_json = filter_json(json,
+    filtered_json = url_decoder.filter_json(json,
         "name",
         "description",
         "html_url",
@@ -90,7 +92,7 @@ class GitHubCommitUrlDecoder(_GitHubUrlDecoder):
   def _filter_json(self, json):
     """Filters the JSON from https://developer.github.com/v3/git/commits/#get-a-commit"""
 
-    return filter_json(json,
+    return url_decoder.filter_json(json,
         "sha",
         "url",
         "author",

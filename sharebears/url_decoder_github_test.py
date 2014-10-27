@@ -7,23 +7,27 @@ class _GitHubTestClient:
     self.get_repository_args = []
     self.get_commit_args = []
 
-  def get_repository(self, *pargs):
-    self.get_repository_args.append(pargs)
-
+  def _get_repository_json(self):
     owner_json = { "login": "mgp" }
     return { "owner": owner_json, "name": "repo-name" }
 
+  def get_repository(self, *pargs):
+    self.get_repository_args.append(pargs)
+    return self._get_repository_json()
+
+  def _get_commit_json(self):
+    return { "sha": "a8b7818", "message": "Initial commit" }
+
   def get_commit(self, *pargs):
     self.get_commit_args.append(pargs)
-
-    return { "sha": "a8b7818", "message": "Initial commit" }
+    return self._get_commit_json()
 
 
 class GitHubRepositoryUrlDecoderTest(UrlDecoderTestCase):
   def setUp(self):
     UrlDecoderTestCase.setUp(self)
-    test_client = _GitHubTestClient()
-    self.url_decoder = GitHubRepositoryUrlDecoder(test_client)
+    self.test_client = _GitHubTestClient()
+    self.url_decoder = GitHubRepositoryUrlDecoder(self.test_client)
 
   def test_is_decodeable_url(self):
     # Invalid netloc.
@@ -42,15 +46,23 @@ class GitHubRepositoryUrlDecoderTest(UrlDecoderTestCase):
         self.url_decoder, "https://github.com/mgp/sharebears"))
 
   def test_decode_url(self):
-    # TODO
-    pass
+    url = "https://github.com/mgp/sharebears"
+    parsed_url = self._parse_url(url)
+    json = self.url_decoder.decode_url(url, parsed_url)
+    self.assertDictEqual(json, self.test_client._get_repository_json())
+
+    self.assertEqual(0, len(self.test_client.get_commit_args))
+    self.assertEqual(1, len(self.test_client.get_repository_args))
+    owner, repo = self.test_client.get_repository_args[0]
+    self.assertEqual("mgp", owner)
+    self.assertEqual("sharebears", repo)
 
 
 class GitHubCommitUrlDecoderTest(UrlDecoderTestCase):
   def setUp(self):
     UrlDecoderTestCase.setUp(self)
-    test_client = _GitHubTestClient()
-    self.url_decoder = GitHubCommitUrlDecoder(test_client)
+    self.test_client = _GitHubTestClient()
+    self.url_decoder = GitHubCommitUrlDecoder(self.test_client)
 
   def test_is_decodeable_url(self):
     # Invalid netloc.
@@ -67,8 +79,17 @@ class GitHubCommitUrlDecoderTest(UrlDecoderTestCase):
         self.url_decoder, "https://github.com/mgp/sharebears/commit/a8b7818"))
 
   def test_decode_url(self):
-    # TODO
-    pass
+    url = "https://github.com/mgp/sharebears/commit/a8b7818"
+    parsed_url = self._parse_url(url)
+    json = self.url_decoder.decode_url(url, parsed_url)
+    self.assertDictEqual(json, self.test_client._get_commit_json())
+
+    self.assertEqual(0, len(self.test_client.get_repository_args))
+    self.assertEqual(1, len(self.test_client.get_commit_args))
+    owner, repo, sha = self.test_client.get_commit_args[0]
+    self.assertEqual("mgp", owner)
+    self.assertEqual("sharebears", repo)
+    self.assertEqual("a8b7818", sha)
 
 
 class GitHubGistUrlDecoderTest(UrlDecoderTestCase):
