@@ -1,6 +1,6 @@
-from url_decoder import UrlDecoder, UrlDecoderException, filter_json
-
 import re
+
+from url_decoder import UrlDecoder, UrlDecoderException, filter_json
 
 
 class _GitHubUrlDecoder(UrlDecoder):
@@ -13,7 +13,7 @@ class _GitHubUrlDecoder(UrlDecoder):
 class GitHubRepositoryUrlDecoder(_GitHubUrlDecoder):
   """Renders a GitHub repository."""
 
-  _PATH_REGEX = re.compile("^(?P<owner>\w+)/(?P<repo>\w+)$")
+  _PATH_REGEX = re.compile("^/(?P<owner>\w+)/(?P<repo>\w+)$")
 
   def __init__(self, github_client):
     self.github_client = github_client
@@ -25,7 +25,7 @@ class GitHubRepositoryUrlDecoder(_GitHubUrlDecoder):
     return GitHubRepositoryUrlDecoder._PATH_REGEX.match(parsed_url.path)
 
   def is_decodeable_url(self, url, parsed_url):
-    if not GitHubUrlDecoder.is_decodeable_url(self, url, parsed_url):
+    if not _GitHubUrlDecoder.is_decodeable_url(self, url, parsed_url):
       return False
     elif not self._match_parsed_url(parsed_url):
       return False
@@ -69,7 +69,7 @@ class GitHubRepositoryUrlDecoder(_GitHubUrlDecoder):
 class GitHubCommitUrlDecoder(_GitHubUrlDecoder):
   """Renders a commit belonging to a GitHub repository."""
 
-  _PATH_REGEX = re.compile("^(?P<owner>\w+)/(?P<repo>\w+)/commit/(?P<sha>\w+)$")
+  _PATH_REGEX = re.compile("^/(?P<owner>\w+)/(?P<repo>\w+)/commit/(?P<sha>\w+)$")
 
   def __init__(self, github_client):
     self.github_client = github_client
@@ -81,9 +81,9 @@ class GitHubCommitUrlDecoder(_GitHubUrlDecoder):
     return GitHubCommitUrlDecoder._PATH_REGEX.match(parsed_url.path)
 
   def is_decodeable_url(self, url, parsed_url):
-    if not GitHubUrlDecoder.is_decodeable_url(self, url, parsed_url):
+    if not _GitHubUrlDecoder.is_decodeable_url(self, url, parsed_url):
       return False
-    elif not self._match_parsed_url(parsed_url)
+    elif not self._match_parsed_url(parsed_url):
       return False
     return True
 
@@ -115,11 +115,15 @@ class GitHubCommitUrlDecoder(_GitHubUrlDecoder):
 class GitHubGistUrlDecoder(UrlDecoder):
   """Embeds a Gist."""
 
+  _PATH_REGEX = re.compile("^/\w+/\w+$")
+
   def name(self):
     return "github-gist"
 
   def is_decodeable_url(self, url, parsed_url):
     if not parsed_url.netloc.startswith("gist.github."):
+      return False
+    elif not GitHubGistUrlDecoder._PATH_REGEX.match(parsed_url.path):
       return False
     return True
 
