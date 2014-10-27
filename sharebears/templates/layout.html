@@ -1,0 +1,56 @@
+{% import 'macros.html' as macros %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='reset.css') }}" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    {% assets "app_js" %}
+      <script src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    {% block head %}{% endblock head %}
+    {% assets "all_css" %}
+      <link rel="stylesheet" href="{{ ASSET_URL }}" />
+    {% endassets %}
+    <title>{% block title %}{% block page_name %}{% endblock page_name %} - Sharebears{% endblock title %}</title>
+  </head>
+
+  <body>
+    <header class="clearfix">
+      {% if g.logged_in %}
+        <div id="user-options">
+          <span id="username">{{ g.username }}</span>
+          <nav>
+            <a href="{{ url_for('logout') }}">Log out</a>
+          </nav>
+        </div>
+      {% endif %}
+
+      <h1><a href="{{ url_for('home') }}">Sharebears</a></h1>
+    </header>
+
+    <main class="clearfix">
+      {% if g.logged_in %}
+        <!--
+        <div id="sidebar">
+        </div>
+        -->
+        <div id="content">
+          {% block content %}{% endblock content %}
+        </div>
+      {% else %}
+        <nav>
+          <a href="{{ url_for('log_in_google') }}">Log in with Google</a>
+        </nav>
+      {% endif %}
+    </main>
+
+    <!--
+    <footer>
+      <nav>
+      </nav>
+    </footer>
+    -->
+  </body>
+</html>
+
