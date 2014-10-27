@@ -12,19 +12,19 @@ class Token:
   @staticmethod
   def text(value):
     """Returns a Token for the given text."""
-    return Token(TEXT, value)
+    return Token(Token.TEXT, value)
 
   @staticmethod
   def hash_tag(value):
     """Returns a Token for the given hash tag."""
-    return Token(HASH_TAG, value)
+    return Token(Token.HASH_TAG, value)
 
 
 class UrlToken(Token):
   """A token containing a URL, with its decoder if one is available."""
 
   def __init__(self, url, decoder):
-    Token.__init__(self, url)
+    Token.__init__(self, Token.URL, url)
     self.decoder = decoder
 
 
@@ -34,12 +34,13 @@ class Parser:
 
   @staticmethod
   def _is_url(token_string):
-    # TODO
-    pass
+    # Can use something more complicated like
+    # https://github.com/django/django/blob/695956376ff09b0d6fd5c438f912b9eb05459145/django/core/validators.py#L68
+    return token_string.startswith("http://") or token_string.startswith("https://")
 
   def decoder_for_url(self, url):
     """Returns the decoder that matches the given URL, if any."""
-    for decoder in decoders:
+    for decoder in self.decoders:
       if decoder.matches_url(url):
         return decoder
     return None
@@ -47,7 +48,7 @@ class Parser:
   def parse(self, string):
     """Parses the given string as a list of Token instances."""
 
-    token_strings = string.trim().split()
+    token_strings = string.strip().split()
 
     # Extract the tokens for hash tags.
     hash_tag_tokens = []
@@ -58,8 +59,11 @@ class Parser:
       else:
         break
 
-    # Extract text or URLs from the preceding tokens.
-    token_strings = [:-len(hash_tag_tokens)]
+    if hash_tag_tokens:
+      hash_tag_tokens = list(reversed(hash_tag_tokens))
+      # Extract text or URLs from the preceding tokens.
+      token_strings = token_strings[:-len(hash_tag_tokens)]
+
     tokens = []
     for token_string in token_strings:
       token = None
