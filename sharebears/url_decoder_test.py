@@ -10,9 +10,9 @@ class UrlDecoderTestCase(unittest.TestCase):
   def _parse_url(self, url):
     return urlparse.urlparse(url)
 
-  def _is_decodeable_url(self, decoder, url):
+  def _can_decode_url(self, decoder, url):
     parsed_url = self._parse_url(url)
-    return decoder.is_decodeable_url(url, parsed_url)
+    return decoder.can_decode_url(url, parsed_url)
 
 
 class FilterJsonTestCase(unittest.TestCase):

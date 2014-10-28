@@ -27,7 +27,7 @@ class YouTubeUrlDecoder(UrlDecoder):
     return "youtube"
 
   @staticmethod
-  def is_decodeable_url(url, parsed_url):
+  def can_decode_url(url, parsed_url):
     if not parsed_url.netloc.startswith("www.youtube."):
       return False
     elif parsed_url.path != "/watch":

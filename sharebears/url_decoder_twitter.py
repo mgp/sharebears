@@ -5,7 +5,7 @@ from url_decoder import UrlDecoder
 
 class _TwitterUrlDecoder(UrlDecoder):
   @staticmethod
-  def is_decodeable_url(url, parsed_url):
+  def can_decode_url(url, parsed_url):
     if not parsed_url.netloc.startswith("twitter."):
       return False
     return True
@@ -29,8 +29,8 @@ class TwitterTimelineUrlDecoder(_TwitterUrlDecoder):
     return "twitter-timeline"
 
   @staticmethod
-  def is_decodeable_url(url, parsed_url):
-    if not _TwitterUrlDecoder.is_decodeable_url(url, parsed_url):
+  def can_decode_url(url, parsed_url):
+    if not _TwitterUrlDecoder.can_decode_url(url, parsed_url):
       return False
     elif not TwitterTimelineUrlDecoder._PATH_REGEX.match(parsed_url.path):
       return False
@@ -63,8 +63,8 @@ class TwitterTweetUrlDecoder(_TwitterUrlDecoder):
     return "twitter-tweet"
 
   @staticmethod
-  def is_decodeable_url(url, parsed_url):
-    if not _TwitterUrlDecoder.is_decodeable_url(url, parsed_url):
+  def can_decode_url(url, parsed_url):
+    if not _TwitterUrlDecoder.can_decode_url(url, parsed_url):
       return False
     elif not TwitterTweetUrlDecoder._PATH_REGEX.match(parsed_url.path):
       return False

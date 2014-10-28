@@ -9,18 +9,18 @@ class TwitterTimelineUrlDecoderTest(UrlDecoderTestCase):
     UrlDecoderTestCase.setUp(self)
     self.url_decoder = TwitterTimelineUrlDecoder()
 
-  def test_is_decodeable_url(self):
+  def test_can_decode_url(self):
     # Invalid netloc.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://invalid.twitter.com/omgitsmgp"))
     # Invalid path.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://twitter.com/"))
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://twitter.com/omgitsmgp/status/524646360750891008"))
 
     # Valid URL.
-    self.assertTrue(self._is_decodeable_url(
+    self.assertTrue(self._can_decode_url(
         self.url_decoder, "https://twitter.com/omgitsmgp"))
 
   def test_decode_url(self):
@@ -41,18 +41,18 @@ class TwitterTweetUrlDecoderTest(UrlDecoderTestCase):
     UrlDecoderTestCase.setUp(self)
     self.url_decoder = TwitterTweetUrlDecoder()
 
-  def test_is_decodeable_url(self):
+  def test_can_decode_url(self):
     # Invalid netloc.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://invalid.twitter.com/omgitsmgp/status/524646360750891008"))
     # Invalid path.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://twitter.com/"))
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://twitter.com/omgitsmgp"))
 
     # Valid URL.
-    self.assertTrue(self._is_decodeable_url(
+    self.assertTrue(self._can_decode_url(
         self.url_decoder, "https://twitter.com/omgitsmgp/status/524646360750891008"))
 
   def test_decode_url(self):

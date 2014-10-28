@@ -9,21 +9,21 @@ class YouTubeUrlDecoderTest(UrlDecoderTestCase):
     UrlDecoderTestCase.setUp(self)
     self.url_decoder = YouTubeUrlDecoder()
 
-  def test_is_decodeable_url(self):
+  def test_can_decode_url(self):
     # Invalid netloc.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://invalid.youtube.com/watch?v=JC82Il2cjqA"))
     # Invalid path.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://www.youtube.com"))
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://youtube.com/invalid?v=JC82Il2cjqA"))
     # Invalid query string.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://youtube.com/watch?invalid=JC82Il2cjqA"))
 
     # Valid URL.
-    self.assertTrue(self._is_decodeable_url(
+    self.assertTrue(self._can_decode_url(
         self.url_decoder, "https://www.youtube.com/watch?v=JC82Il2cjqA"))
 
   def test_decode_url(self):

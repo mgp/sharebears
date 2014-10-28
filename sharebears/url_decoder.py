@@ -24,7 +24,7 @@ class UrlDecoder:
     raise NotImplementedError
 
   @staticmethod
-  def is_decodeable_url(url, parsed_url):
+  def can_decode_url(url, parsed_url):
     raise NotImplementedError
 
   def decode_url(self, url, parsed_url):

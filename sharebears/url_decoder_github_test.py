@@ -32,20 +32,20 @@ class GitHubRepositoryUrlDecoderTest(UrlDecoderTestCase):
     self.test_client = _GitHubTestClient()
     self.url_decoder = GitHubRepositoryUrlDecoder(self.test_client)
 
-  def test_is_decodeable_url(self):
+  def test_can_decode_url(self):
     # Invalid netloc.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://invalid.github.com/mgp/sharebears"))
     # Invalid path.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://github.com/"))
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://github.com/mgp"))
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://github.com/mgp/sharebears/wiki"))
 
     # Valid URL.
-    self.assertTrue(self._is_decodeable_url(
+    self.assertTrue(self._can_decode_url(
         self.url_decoder, "https://github.com/mgp/sharebears"))
 
   def test_decode_url(self):
@@ -99,18 +99,18 @@ class GitHubCommitUrlDecoderTest(UrlDecoderTestCase):
     self.test_client = _GitHubTestClient()
     self.url_decoder = GitHubCommitUrlDecoder(self.test_client)
 
-  def test_is_decodeable_url(self):
+  def test_can_decode_url(self):
     # Invalid netloc.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://invalid.github.com/mgp/sharebears/commit/a8b7818"))
     # Invalid path.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://github.com/"))
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://github.com/mgp/sharebears/commit"))
 
     # Valid URL.
-    self.assertTrue(self._is_decodeable_url(
+    self.assertTrue(self._can_decode_url(
         self.url_decoder, "https://github.com/mgp/sharebears/commit/a8b7818"))
 
   def test_decode_url(self):
@@ -163,18 +163,18 @@ class GitHubGistUrlDecoderTest(UrlDecoderTestCase):
     UrlDecoderTestCase.setUp(self)
     self.url_decoder = GitHubGistUrlDecoder()
 
-  def test_is_decodeable_url(self):
+  def test_can_decode_url(self):
     # Invalid netloc.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://invalid.gist.github.com/mgp/92b50ae3e1b1b46eadab"))
     # Invalid path.
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://gist.github.com/"))
-    self.assertFalse(self._is_decodeable_url(
+    self.assertFalse(self._can_decode_url(
         self.url_decoder, "https://gist.github.com/mgp"))
 
     # Valid URL.
-    self.assertTrue(self._is_decodeable_url(
+    self.assertTrue(self._can_decode_url(
         self.url_decoder, "https://gist.github.com/mgp/92b50ae3e1b1b46eadab"))
 
   def test_decode_url(self):

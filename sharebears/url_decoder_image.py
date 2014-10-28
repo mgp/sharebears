@@ -17,7 +17,7 @@ class ImageUrlDecoder(UrlDecoder):
     return "image"
 
   @staticmethod
-  def is_decodeable_url(url, parsed_url):
+  def can_decode_url(url, parsed_url):
     parsed_path = parsed_url.path
     return (parsed_path.endswith(".jpeg") or
         parsed_path.endswith(".jpg") or

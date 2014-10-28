@@ -6,7 +6,7 @@ from url_decoder import UrlDecoder, UrlDecoderException
 
 class _GitHubUrlDecoder(UrlDecoder):
   @staticmethod
-  def is_decodeable_url(url, parsed_url):
+  def can_decode_url(url, parsed_url):
     if not parsed_url.netloc.startswith("github."):
       return False
     return True
@@ -54,8 +54,8 @@ class GitHubRepositoryUrlDecoder(_GitHubUrlDecoder):
     return GitHubRepositoryUrlDecoder._PATH_REGEX.match(parsed_url.path)
 
   @staticmethod
-  def is_decodeable_url(url, parsed_url):
-    if not _GitHubUrlDecoder.is_decodeable_url(url, parsed_url):
+  def can_decode_url(url, parsed_url):
+    if not _GitHubUrlDecoder.can_decode_url(url, parsed_url):
       return False
     elif not GitHubRepositoryUrlDecoder._match_parsed_url(parsed_url):
       return False
@@ -135,8 +135,8 @@ class GitHubCommitUrlDecoder(_GitHubUrlDecoder):
     return GitHubCommitUrlDecoder._PATH_REGEX.match(parsed_url.path)
 
   @staticmethod
-  def is_decodeable_url(url, parsed_url):
-    if not _GitHubUrlDecoder.is_decodeable_url(url, parsed_url):
+  def can_decode_url(url, parsed_url):
+    if not _GitHubUrlDecoder.can_decode_url(url, parsed_url):
       return False
     elif not GitHubCommitUrlDecoder._match_parsed_url(parsed_url):
       return False
@@ -184,7 +184,7 @@ class GitHubGistUrlDecoder(UrlDecoder):
     return "github-gist"
 
   @staticmethod
-  def is_decodeable_url(url, parsed_url):
+  def can_decode_url(url, parsed_url):
     if not parsed_url.netloc.startswith("gist.github."):
       return False
     elif not GitHubGistUrlDecoder._PATH_REGEX.match(parsed_url.path):
