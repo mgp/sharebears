@@ -24,7 +24,7 @@ def create_engine(database_name, database_uri):
 def create_session(engine):
   """Creates the session."""
   # Use scoped_session with Flask: http://flask.pocoo.org/docs/patterns/sqlalchemy/
-  global session
+  global _session
   _session = sa_orm.scoped_session(sa_orm.sessionmaker(
       autocommit=False, autoflush=False, bind=engine))
 

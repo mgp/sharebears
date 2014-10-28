@@ -11,8 +11,8 @@ class Post(_Base):
 
   id = sa.Column(sa.Integer, primary_key=True)
   creator = sa.Column(sa.String, nullable=False)
-  created_time = sa.Column(sa.DateTime, nullable=False)
-  num_stars = sa.Column(sa.Integer, nullable=False)
+  created_datetime = sa.Column(sa.DateTime, nullable=False)
+  num_stars = sa.Column(sa.Integer, nullable=False, default=0)
   data = sa.Column(sa.String, nullable=False)
 
 
@@ -21,7 +21,7 @@ class HashTag(_Base):
 
   post_id = sa.Column(sa.Integer, sa.ForeignKey("Posts.id"), primary_key=True)
   value = sa.Column(sa.String, primary_key=True)
-  created_time = sa.Column(sa.DateTime, nullable=False)
+  created_datetime = sa.Column(sa.DateTime, nullable=False)
 
 
 class User(_Base):
@@ -35,7 +35,7 @@ class StarredPost(_Base):
 
   post_id = sa.Column(sa.Integer, sa.ForeignKey("Posts.id"), primary_key=True)
   user_id = sa.Column(sa.Integer, sa.ForeignKey("Users.id"), primary_key=True)
-  created_time = sa.Column(sa.DateTime, nullable=False)
+  created_datetime = sa.Column(sa.DateTime, nullable=False)
   starred_time = sa.Column(sa.DateTime, nullable=False)
 
 
@@ -56,11 +56,11 @@ _create_table_aliases()
 def _define_indexes():
   """Defines the indexes needed for efficient queries."""
   # Return all posts sorted by time.
-  sa_schema.Index("PostsByTime", Post.created_time, Post.id)
+  sa_schema.Index("PostsByTime", Post.created_datetime, Post.id)
   # Return all posts sorted by time for a given hash tag.
-  sa_schema.Index("HashTagsByTime", HashTag.value, HashTag.created_time, HashTag.post_id)
+  sa_schema.Index("HashTagsByTime", HashTag.value, HashTag.created_datetime, HashTag.post_id)
   # Return all users that starred a post.
-  sa_schema.Index("StarredPostsByUser", StarredPost.user_id, StarredPost.created_time, StarredPost.post_id)
+  sa_schema.Index("StarredPostsByUser", StarredPost.user_id, StarredPost.created_datetime, StarredPost.post_id)
 
 _define_indexes()
 
