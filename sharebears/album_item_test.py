@@ -2,7 +2,7 @@ import itertools
 import unittest
 
 import album_item
-from url_decoder import RenderableItem
+from renderable_item import RenderableItem
 from url_decoder_image import ImageItem, ImageUrlDecoder
 
 

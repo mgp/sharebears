@@ -12,12 +12,6 @@ class UrlDecoderException(Exception):
     return str(self.reason)
 
 
-class RenderableItem:
-  def __init__(self, type, item):
-    self.type = type
-    self.item = item
-
-
 class UrlDecoder:
   @staticmethod
   def name():

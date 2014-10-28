@@ -1,6 +1,6 @@
 import unittest
 
-from url_decoder import RenderableItem
+from renderable_item import RenderableItem
 import filters
 
 

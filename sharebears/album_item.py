@@ -1,4 +1,4 @@
-from url_decoder import RenderableItem, UrlDecoder
+from renderable_item import RenderableItem
 from url_decoder_image import ImageUrlDecoder
 
 
