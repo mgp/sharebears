@@ -6,6 +6,21 @@ import db_schema
 import db_util
 
 
+class PostInsertData:
+  def __init__(self, user_id, data, hash_tags, now):
+    self.user_id = user_id
+    self.data = data
+    self.hash_tags = hash_tags
+    self.now = now
+
+  def __repr__(self):
+    return "PostInsertData(user_id=%r, data=%r, hash_tags=%r, now=%r)" % (
+        self.user_id,
+        self.data,
+        self.hash_tags,
+        self.now)
+
+
 class DbTest(unittest.TestCase):
   # Use an in-memory SQLite database.
   _DATABASE = "sqlite"
@@ -27,13 +42,26 @@ class DbTest(unittest.TestCase):
     unittest.TestCase.tearDown(self)
 
 
-  def _assert_post(self, post, creator, created_datetime, data, num_stars, hash_tags):
-    self.assertIsNotNone(post)
-    self.assertEqual(creator, post.creator)
-    self.assertEqual(created_datetime, post.created_datetime)
-    self.assertEqual(data, post.data)
-    self.assertEqual(num_stars, post.num_stars)
-    self.assertSequenceEqual(hash_tags, post.hash_tags)
+  def _add_post(self, insert_data):
+    """Inserts the given PostInsertData into the database."""
+    self.assertIsNotNone(insert_data)
+    post_id = db.add_post(
+        insert_data.user_id, insert_data.data, insert_data.hash_tags, now=insert_data.now)
+    self.assertIsNotNone(post_id)
+    return post_id
+
+  def _assert_post(self, insert_data, actual_post, expected_num_stars=0):
+    """Asserts that the given Post contains the given PostInsertData."""
+
+    self.assertIsNotNone(insert_data)
+    self.assertIsNotNone(actual_post)
+
+    self.assertIsNotNone(actual_post.id)
+    self.assertEqual(insert_data.user_id, actual_post.creator)
+    self.assertEqual(insert_data.now, actual_post.created_datetime)
+    self.assertEqual(insert_data.data, actual_post.data)
+    self.assertSequenceEqual(insert_data.hash_tags, actual_post.hash_tags)
+    self.assertEqual(expected_num_stars, actual_post.num_stars)
 
 
   def test_get_missing_post(self):
@@ -41,56 +69,64 @@ class DbTest(unittest.TestCase):
     post = db.get_post(missing_post_id)
     self.assertIsNone(post)
 
-
   def test_get_post(self):
-    hash_tag1 = "hash_tag1"
-    hash_tag2 = "hash_tag2"
-    hash_tag3 = "hash_tag3"
-
     # Write the first post by one user.
-    user_id1 = "user_id1"
-    data1 = "data1"
-    hash_tags1 = [hash_tag1, hash_tag2]
+    hash_tags1 = ["hash_tag1", "hash_tag2"]
     now1 = datetime(2013, 9, 26)
-    post_id1 = db.add_post(user_id1, data1, hash_tags1, now=now1)
-    self.assertIsNotNone(post_id1)
+    insert_data1 = PostInsertData("user_id1", "data1", hash_tags1, now1)
+    post_id1 = self._add_post(insert_data1)
 
     # Write the second post by another user.
-    user_id2 = "user_id2"
-    data2 = "data2"
-    hash_tags2 = [hash_tag2, hash_tag3]
+    hash_tags2 = ["hash_tag3"]
     now2 = datetime(2014, 10, 27)
-    post_id2 = db.add_post(user_id2, data2, hash_tags2, now=now2)
-    self.assertIsNotNone(post_id2)
+    insert_data2 = PostInsertData("user_id2", "data2", hash_tags2, now2)
+    post_id2 = self._add_post(insert_data2)
 
     # Assert that the first post is read correctly.
-    post1 = db.get_post(post_id1)
-    self._assert_post(post1, user_id1, now1, data1, 0, hash_tags1)
+    self._assert_post(insert_data1, db.get_post(post_id1), 0)
     # Assert that the second post is read correctly.
-    post2 = db.get_post(post_id2)
-    self._assert_post(post2, user_id2, now2, data2, 0, hash_tags2)
+    self._assert_post(insert_data2, db.get_post(post_id2), 0)
 
     # Get both posts.
     all_posts = db.get_posts()
     self.assertEqual(2, len(all_posts.items))
     # Assert that the second post is returned first because it is more recent.
-    self._assert_post(all_posts[0], user_id2, now2, data2, 0, hash_tags2)
+    self._assert_post(insert_data2, all_posts[0], 0)
     # Assert that the first post is returned last because it is less recent.
-    self._assert_post(all_posts[1], user_id1, now1, data1, 0, hash_tags1)
+    self._assert_post(insert_data1, all_posts[1], 0)
+
+  def test_get_posts_with_hashtag(self):
+    hash_tag1 = "hash_tag1"
+    hash_tag2 = "hash_tag2"
+    hash_tag3 = "hash_tag3"
+
+    # Write the first post by one user.
+    hash_tags1 = [hash_tag1, hash_tag2]
+    now1 = datetime(2013, 9, 26)
+    insert_data1 = PostInsertData("user_id1", "data1", hash_tags1, now1)
+    post_id1 = self._add_post(insert_data1)
+    self.assertIsNotNone(post_id1)
+
+    # Write the second post by another user.
+    hash_tags2 = [hash_tag2, hash_tag3]
+    now2 = datetime(2014, 10, 27)
+    insert_data2 = PostInsertData("user_id2", "data2", hash_tags2, now2)
+    post_id2 = self._add_post(insert_data2)
+    self.assertIsNotNone(post_id2)
 
     # Only the first post has the first hash tag.
     hash_tag_posts = db.get_posts_with_hashtag(hash_tag1)
     self.assertEqual(1, len(hash_tag_posts.items))
-    self._assert_post(hash_tag_posts[0], user_id1, now1, data1, 0, hash_tags1)
+    self._assert_post(insert_data1, hash_tag_posts[0], 0)
     # Only the second post has the third hash tag.
     hash_tag_posts = db.get_posts_with_hashtag(hash_tag3)
     self.assertEqual(1, len(hash_tag_posts.items))
-    self._assert_post(hash_tag_posts[0], user_id2, now2, data2, 0, hash_tags2)
+    self._assert_post(insert_data2, hash_tag_posts[0], 0)
     # Both posts have the second hash tag. Assert ordering from most recent to least recent.
     hash_tag_posts = db.get_posts_with_hashtag(hash_tag2)
     self.assertEqual(2, len(hash_tag_posts.items))
-    self._assert_post(hash_tag_posts[0], user_id2, now2, data2, 0, hash_tags2)
-    self._assert_post(hash_tag_posts[1], user_id1, now1, data1, 0, hash_tags1)
+    self._assert_post(insert_data2, hash_tag_posts[0], 0)
+    self._assert_post(insert_data1, hash_tag_posts[1], 0)
 
 
 def suite():
