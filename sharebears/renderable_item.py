@@ -11,7 +11,7 @@ class RenderableItem:
 
   @staticmethod
   def for_url(url):
-    """Returns a RenderableItem for a bare URL."""
+    """Returns a RenderableItem for an unrecognized URL."""
     return RenderableItem(RenderableItem.URL_TYPE, url)
 
   @staticmethod

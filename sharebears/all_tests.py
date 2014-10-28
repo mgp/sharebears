@@ -4,6 +4,7 @@ import album_item_test
 import db_test
 import filters_test
 import parser_test
+import post_processor_test
 import renderable_item_test
 import url_decoder_github_test
 import url_decoder_image_test
@@ -18,6 +19,7 @@ def suite():
   suite.addTest(db_test.suite())
   suite.addTest(filters_test.suite())
   suite.addTest(parser_test.suite())
+  suite.addTest(post_processor_test.suite())
   suite.addTest(renderable_item_test.suite())
   suite.addTest(url_decoder_github_test.suite())
   suite.addTest(url_decoder_image_test.suite())

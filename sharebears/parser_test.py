@@ -1,22 +1,15 @@
 import unittest
 
 import parser
-
-
-class _ParserTestDecoder:
-  def __init__(self, matched_url_prefix):
-    self.matched_url_prefix = matched_url_prefix
-
-  def can_decode_url(self, url):
-    return url.startswith(self.matched_url_prefix)
+from test_util import TestDecoder
 
 
 class ParserTest(unittest.TestCase):
   def setUp(self):
     unittest.TestCase.setUp(self)
 
-    self.decoder0 = _ParserTestDecoder("http://decoder0")
-    self.decoder1 = _ParserTestDecoder("http://decoder1")
+    self.decoder0 = TestDecoder("decoder0", "http://decoder0")
+    self.decoder1 = TestDecoder("decoder1", "http://decoder1")
     self.parser = parser.Parser([self.decoder0, self.decoder1])
 
 
