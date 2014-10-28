@@ -6,9 +6,8 @@ def _get_client_values(client):
   """Assigns values from the session to the request globals"""
 
   flask.g.logged_in = True
-  flask.g.email_address = client['email_address']
-  flask.g.name = client['name']
-  flask.g.client_auth = client['auth']
+  flask.g.auth_method = client['auth_method']
+  flask.g.user_id = client['user_id']
 
 
 def login_required(f):
@@ -49,9 +48,8 @@ def login_optional(f):
       _get_client_values(client)
     else:
       flask.g.logged_in = False
-      flask.g.email_address = None
-      flask.g.name = None
-      flask.g.client_auth = None
+      flask.g.auth_method = None
+      flask.g.user_id = None
 
     flask.g.page_name = page_name
     return f(*pargs, **kwargs)
