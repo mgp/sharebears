@@ -70,6 +70,14 @@ class DbTest(unittest.TestCase):
     post2 = db.get_post(post_id2)
     self._assert_post(post2, user_id2, now2, data2, 0, hash_tags2)
 
+    # Get both posts.
+    all_posts = db.get_posts()
+    self.assertEqual(2, len(all_posts.items))
+    # Assert that the second post is returned first because it is more recent.
+    self._assert_post(all_posts[0], user_id2, now2, data2, 0, hash_tags2)
+    # Assert that the first post is returned last because it is less recent.
+    self._assert_post(all_posts[1], user_id1, now1, data1, 0, hash_tags1)
+
 
 def suite():
   suite = unittest.TestSuite()

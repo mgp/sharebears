@@ -1,5 +1,6 @@
 import sqlalchemy as sa
 import sqlalchemy.ext.declarative as sa_ext_declarative
+import sqlalchemy.orm as sa_orm
 import sqlalchemy.schema as sa_schema
 
 
@@ -22,6 +23,8 @@ class HashTag(_Base):
   post_id = sa.Column(sa.Integer, sa.ForeignKey("Posts.id"), primary_key=True)
   value = sa.Column(sa.String, primary_key=True)
   created_datetime = sa.Column(sa.DateTime, nullable=False)
+
+  post = sa_orm.relationship("Post", backref=sa_orm.backref("hash_tags"))
 
 
 class User(_Base):

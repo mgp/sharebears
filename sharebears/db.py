@@ -7,6 +7,23 @@ import db_util
 from db_util import DbException
 
 
+class PaginatedSequence:
+  """A sequence of items read from the database.
+
+  This sequence may not represent all items in the sequence.
+  Using the pagination values, a client can iterate over all items.
+  """
+
+  def __init__(self, items):
+    self.items = items
+
+  def __getitem__(self, index):
+    return self.items[index]
+
+  def __repr__(self):
+    return "PaginatedSequence(items=%r)" % self.items
+
+
 class Post:
   """A post read from the database."""
 
@@ -37,6 +54,11 @@ def _utcnow(now):
 
 @db_util.use_session
 def add_post(session, user_id, data, hash_tags, now=None):
+  """Creates a new post with the given properties.
+
+  Returns the identifier of the created post.
+  """
+
   now = _utcnow(now)
 
   try:
@@ -58,24 +80,48 @@ def add_post(session, user_id, data, hash_tags, now=None):
     raise db_util.DbException._chain()
 
 
+def _make_post(mapped_post):
+  """Returns a Post constructed from the given MappedPost and hash tags."""
+  hash_tags = tuple(mapped_hash_tag.value for mapped_hash_tag in mapped_post.hash_tags)
+  return Post(mapped_post.id,
+      mapped_post.creator,
+      mapped_post.created_datetime,
+      mapped_post.data,
+      mapped_post.num_stars,
+      hash_tags)
+
+
 @db_util.use_session
 def get_post(session, post_id, now=None):
+  """Returns the post with the given identifier."""
+
   now = _utcnow(now)
 
   try:
     mapped_post = session.query(MappedPost)\
+        .options(sa_orm.subqueryload(MappedPost.hash_tags))\
         .filter(MappedPost.id == post_id)\
         .one()
-    hash_tags = tuple(row[0] for row in session.query(MappedHashTag.value)\
-        .filter(MappedHashTag.post_id == post_id))
-    return Post(mapped_post.id,
-        mapped_post.creator,
-        mapped_post.created_datetime,
-        mapped_post.data,
-        mapped_post.num_stars,
-        hash_tags)
+    return _make_post(mapped_post)
   except sa_orm.exc.NoResultFound:
     return None
+
+
+@db_util.use_session
+def get_posts(session, now=None):
+  """Returns all posts."""
+
+  now = _utcnow(now)
+
+  try:
+    mapped_posts = session.query(MappedPost)\
+        .options(sa_orm.subqueryload(MappedPost.hash_tags))\
+        .order_by(MappedPost.created_datetime.desc())
+    posts = tuple(_make_post(mapped_post) for mapped_post in mapped_posts)
+    return PaginatedSequence(posts)
+  except sa.exc.IntegrityError:
+    session.rollback()
+    raise db_util.DbException._chain()
 
 
 @db_util.use_session
