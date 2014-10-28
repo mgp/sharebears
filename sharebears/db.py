@@ -20,6 +20,9 @@ class PaginatedSequence:
   def __getitem__(self, index):
     return self.items[index]
 
+  def __len__(self):
+    return len(self.items)
+
   def __repr__(self):
     return "PaginatedSequence(items=%r)" % self.items
 
@@ -143,11 +146,19 @@ def get_posts_with_hashtag(session, hash_tag, now=None):
 
 
 @db_util.use_session
-def get_posts_by_user(client_id):
+def get_posts_by_user(session, user_id, now=None):
   """Returns all posts by the given user."""
 
   now = _utcnow(now)
-  # TODO
+  try:
+    mapped_posts = session.query(MappedPost)\
+        .order_by(MappedPost.created_datetime.desc())\
+        .filter(MappedPost.creator == user_id)
+    posts = tuple(_make_post(mapped_post) for mapped_post in mapped_posts)
+    return PaginatedSequence(posts)
+  except sa.exc.IntegrityError:
+    session.rollback()
+    raise db_util.DbException._chain()
 
 
 @db_util.use_session
