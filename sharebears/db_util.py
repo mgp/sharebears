@@ -5,11 +5,12 @@ import sqlalchemy.orm as sa_orm
 import sys
 
 
-# TODO(mgp): Make this not global?
-_engine = None
-session = None
-def create_session(database, database_uri):
-  if database == 'sqlite':
+_session = None
+
+def create_engine(database_name, database_uri):
+  """Returns an engine for the given database."""
+
+  if database_name == "sqlite":
     # http://docs.sqlalchemy.org/en/rel_0_9/dialects/sqlite.html#foreign-key-support
     @sa.event.listens_for(sa_engine.Engine, "connect")
     def set_sqlite_pragma(dbapi_connection, connection_record):
@@ -17,40 +18,45 @@ def create_session(database, database_uri):
       cursor.execute("PRAGMA foreign_keys=ON")
       cursor.close()
 
-  global _engine
-  _engine = sa.create_engine(database_uri, convert_unicode=True, echo=False)
+  return sa.create_engine(database_uri, convert_unicode=True, echo=False)
 
+
+def create_session(engine):
+  """Creates the session."""
   # Use scoped_session with Flask: http://flask.pocoo.org/docs/patterns/sqlalchemy/
   global session
-  session = sa_orm.scoped_session(sa_orm.sessionmaker(
-      autocommit=False, autoflush=False, bind=_engine))
-
-  # Create aliases for each table.
-  global Users
-  global Posts
-  global HashTags
-  global StarredPosts
-  Users = User.__table__
-  Posts = Post.__table__
-  HashTags = HashTag.__table__
-  StarredPosts = StarredPost.__table__
+  _session = sa_orm.scoped_session(sa_orm.sessionmaker(
+      autocommit=False, autoflush=False, bind=engine))
 
 
-def close_session(f):
-  """A decorator that closes the session before returning a result.
+def init_db(database_name, database_uri):
+  """Initializes the database.
+  
+  This returns the Engine instance needed for creating the tables.
   """
+  engine = create_engine(database_name, database_uri)
+  create_session(engine)
+  return engine
+
+
+def get_session():
+  """Returns the session."""
+  return _session
+
+
+def use_session(f):
+  """A decorator that closes the session before returning a result."""
 
   @functools.wraps(f)
   def decorated_function(*pargs, **kwargs):
-    result = f(*pargs, **kwargs)
-    session.close()
+    result = f(_session, *pargs, **kwargs)
+    _session.close()
     return result
   return decorated_function
 
 
 class DbException(Exception):
-  """Exception class raised by the database.
-  """
+  """Exception class raised by the database."""
 
   def __init__(self, reason):
     Exception.__init__(self)

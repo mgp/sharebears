@@ -1,20 +1,20 @@
-from db_schema import User, Post, HashTag, StarredPost
-from db_util import close_session, DbException, optional_one
+from db_schema import User, Users, Post, Posts, HashTag, HashTags, StarredPost, StarredPosts
+import db_util
+from db_util import DbException
 
 from datetime import datetime
 import sqlalchemy.ext.declarative as sa_ext_declarative
 
 
 def _utcnow(now):
-  """Returns the given time if not None, or datetime.utcnow() otherwise.
-  """
+  """Returns the given time if not None, or datetime.utcnow() otherwise."""
   if now is None:
     return datetime.utcnow()
   return now
 
 
-@db_util.close_session
-def add_post(user_id, data, hash_tags, now=None):
+@db_util.use_session
+def add_post(session, user_id, data, hash_tags, now=None):
   now = _utcnow(now)
 
   try:
@@ -36,15 +36,15 @@ def add_post(user_id, data, hash_tags, now=None):
     raise common_db.DbException._chain()
 
 
-@db_util.close_session
+@db_util.use_session
 def get_post(post_id):
   now = _utcnow(now)
 
   # TODO
 
 
-@close_session
-def star_post(user_id, post_id, now=None):
+@db_util.use_session
+def star_post(session, user_id, post_id, now=None):
   now = _utcnow(now)
 
   try:
@@ -76,7 +76,7 @@ def star_post(user_id, post_id, now=None):
   session.commit()
 
 
-@db_util.close_session
+@db_util.use_session
 def unstar_post(user_id, post_id, now=None):
   now = _utcnow(now)
 
@@ -94,17 +94,20 @@ def unstar_post(user_id, post_id, now=None):
       .values({Post.num_stars: Post.num_stars - 1}))
 
 
-@close_session
+@db_util.use_session
 def get_all_posts():
   now = _utcnow(now)
+  # TODO
 
 
-@close_session
+@db_util.use_session
 def get_posts_for_user(client_id):
   now = _utcnow(now)
+  # TODO
 
 
-@close_session
+@db_util.use_session
 def get_post_for_hashtag(hash_tag):
   now = _utcnow(now)
+  # TODO
 
