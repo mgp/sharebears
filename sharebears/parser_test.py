@@ -7,7 +7,7 @@ class _ParserTestDecoder:
   def __init__(self, matched_url_prefix):
     self.matched_url_prefix = matched_url_prefix
 
-  def matches_url(self, url):
+  def can_decode_url(self, url):
     return url.startswith(self.matched_url_prefix)
 
 

@@ -41,7 +41,7 @@ class Parser:
   def _decoder_for_url(self, url):
     """Returns the decoder that matches the given URL, if any."""
     for decoder in self.decoders:
-      if decoder.matches_url(url):
+      if decoder.can_decode_url(url):
         return decoder
     return None
 
