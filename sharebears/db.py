@@ -2,7 +2,7 @@ from datetime import datetime
 import sqlalchemy as sa
 import sqlalchemy.orm as sa_orm
 
-from db_schema import User as MappedUser, Users, Post as MappedPost, Posts, HashTag as MappedHashTag, HashTags, StarredPost as MappedStarredPost, StarredPosts
+from db_schema import Post as MappedPost, Posts, HashTag as MappedHashTag, HashTags, StarredPost as MappedStarredPost, StarredPosts
 import db_util
 from db_util import DbException
 
@@ -166,50 +166,57 @@ def star_post(session, user_id, post_id, now=None):
   now = _utcnow(now)
 
   try:
-    # Get the time at which the post was created.
-    created_time = session.query(Post.created_time)\
-        .filter(Post.id == post_id)\
-        .one()\
-        .created_time
     # Add the user's star for this post.
-    starred_post = StarredPost(post_id=post_id,
+    starred_post = MappedStarredPost(post_id=post_id,
         user_id=user_id,
-        created_time=created_time,
-        starred_time=now)
+        starred_datetime=now)
     session.add(starred_post)
     session.flush()
-  except sa_orm.exc.NoResultFound:
-    session.rollback()
-    raise common_db.DbException._chain()
   except sa.exc.IntegrityError:
-    # The flush failed because the user has already starred this post.
+    # The user has already starred this post, or this post does not exist.
     session.rollback()
-    raise common_db.DbException._chain()
-  
+    return None
+
   # Increment the count of stars for the post.
   session.execute(Posts.update()
-      .where(Post.id == post_id)
-      .values({Post.num_stars: Post.num_stars + 1}))
+      .where(MappedPost.id == post_id)
+      .values({MappedPost.num_stars: MappedPost.num_stars + 1}))
 
   session.commit()
 
 
 @db_util.use_session
-def unstar_post(user_id, post_id, now=None):
+def get_stars(session, post_id, now=None):
+  now = _utcnow(now)
+
+  try:
+    mapped_starred_posts = session.query(MappedStarredPost.user_id)\
+        .order_by(MappedStarredPost.starred_datetime.desc())\
+        .filter(MappedStarredPost.post_id == post_id)
+    user_ids = tuple(mapped_starred_post.user_id for mapped_starred_post in mapped_starred_posts)
+    return PaginatedSequence(user_ids)
+  except sa.exc.IntegrityError:
+    session.rollback()
+    raise db_util.DbException._chain()
+
+
+@db_util.use_session
+def unstar_post(session, user_id, post_id, now=None):
   now = _utcnow(now)
 
   # Remove the user's star for the post.
   result = session.execute(StarredPosts.delete().where(sa.and_(
-      StarredPost.user_id == user_id,
-      StarredPost.post_id == post_id)))
+      MappedStarredPost.user_id == user_id,
+      MappedStarredPost.post_id == post_id)))
   if not result.rowcount:
+    # The user has not starred this post.
     session.rollback()
     return
 
   # Decrement the count of stars for the post.
   session.execute(Posts.update()
-      .where(Post.id == post_id)
-      .values({Post.num_stars: Post.num_stars - 1}))
+      .where(MappedPost.id == post_id)
+      .values({MappedPost.num_stars: MappedPost.num_stars - 1}))
 
-
+  session.commit()
 
