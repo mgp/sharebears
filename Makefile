@@ -3,3 +3,7 @@ clean:
 
 test:
 	python sharebears/all_tests.py
+
+serve:
+	python ./run.py
+
