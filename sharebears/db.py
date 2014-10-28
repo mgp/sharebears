@@ -125,6 +125,32 @@ def get_posts(session, now=None):
 
 
 @db_util.use_session
+def get_posts_with_hashtag(session, hash_tag, now=None):
+  """Returns all posts with the given hash tag."""
+
+  now = _utcnow(now)
+
+  try:
+    mapped_hash_tags = session.query(MappedHashTag)\
+        .options(sa_orm.joinedload(MappedHashTag.post))\
+        .order_by(MappedHashTag.created_datetime.desc())\
+        .filter(MappedHashTag.value == hash_tag)
+    posts = tuple(_make_post(mapped_hash_tag.post) for mapped_hash_tag in mapped_hash_tags)
+    return PaginatedSequence(posts)
+  except sa.exc.IntegrityError:
+    session.rollback()
+    raise db_util.DbException._chain()
+
+
+@db_util.use_session
+def get_posts_by_user(client_id):
+  """Returns all posts by the given user."""
+
+  now = _utcnow(now)
+  # TODO
+
+
+@db_util.use_session
 def star_post(session, user_id, post_id, now=None):
   now = _utcnow(now)
 
@@ -175,20 +201,4 @@ def unstar_post(user_id, post_id, now=None):
       .values({Post.num_stars: Post.num_stars - 1}))
 
 
-@db_util.use_session
-def get_all_posts():
-  now = _utcnow(now)
-  # TODO
-
-
-@db_util.use_session
-def get_posts_for_user(client_id):
-  now = _utcnow(now)
-  # TODO
-
-
-@db_util.use_session
-def get_post_for_hashtag(hash_tag):
-  now = _utcnow(now)
-  # TODO
 

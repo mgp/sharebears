@@ -78,6 +78,20 @@ class DbTest(unittest.TestCase):
     # Assert that the first post is returned last because it is less recent.
     self._assert_post(all_posts[1], user_id1, now1, data1, 0, hash_tags1)
 
+    # Only the first post has the first hash tag.
+    hash_tag_posts = db.get_posts_with_hashtag(hash_tag1)
+    self.assertEqual(1, len(hash_tag_posts.items))
+    self._assert_post(hash_tag_posts[0], user_id1, now1, data1, 0, hash_tags1)
+    # Only the second post has the third hash tag.
+    hash_tag_posts = db.get_posts_with_hashtag(hash_tag3)
+    self.assertEqual(1, len(hash_tag_posts.items))
+    self._assert_post(hash_tag_posts[0], user_id2, now2, data2, 0, hash_tags2)
+    # Both posts have the second hash tag. Assert ordering from most recent to least recent.
+    hash_tag_posts = db.get_posts_with_hashtag(hash_tag2)
+    self.assertEqual(2, len(hash_tag_posts.items))
+    self._assert_post(hash_tag_posts[0], user_id2, now2, data2, 0, hash_tags2)
+    self._assert_post(hash_tag_posts[1], user_id1, now1, data1, 0, hash_tags1)
+
 
 def suite():
   suite = unittest.TestSuite()
