@@ -9,7 +9,7 @@ def _youtube_player_id(video_id):
 def _is_decoded_type(decoder_type):
   # name must be a static method.
   decoder_name = decoder_type.name()
-  return lambda arg: arg.decoder_name == decoder_name
+  return lambda arg: arg.type == decoder_name
 
 
 def add_to_environment(environment):

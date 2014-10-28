@@ -1,3 +1,6 @@
+import iso8601
+
+
 class UrlDecoderException(Exception):
   """An exception raised by UrlDecoder."""
 
@@ -9,10 +12,10 @@ class UrlDecoderException(Exception):
     return str(self.reason)
 
 
-class RenderableUrl:
-  def __init__(self, decoder_name, value):
-    self.decoder_name = decoder_name
-    self.value = value
+class RenderableItem:
+  def __init__(self, type, item):
+    self.type = type
+    self.item = item
 
 
 class UrlDecoder:
@@ -27,7 +30,7 @@ class UrlDecoder:
   def decode_url(self, url, parsed_url):
     raise NotImplementedError
 
-  def render_decoded_url(self, decoded_url):
+  def item_for_rendering(self, decoded_url):
     raise NotImplementedError
 
 
@@ -35,4 +38,9 @@ def filter_json(json, *keys):
   """Returns the given JSON but with only the given keys."""
 
   return {key: json[key] for key in keys if key in json}
+
+def to_datetime(iso_8601_string):
+  """Returns a datetime instance constructed from the given ISO 8601 string."""
+
+  iso8601.parse_date(iso_8601_string)
 

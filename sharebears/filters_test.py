@@ -1,6 +1,6 @@
 import unittest
 
-from url_decoder import RenderableUrl
+from url_decoder import RenderableItem
 import filters
 
 
@@ -16,10 +16,10 @@ class FiltersTest(unittest.TestCase):
     filter_name = _FiltersTestDecoder.name()
 
     # Pass an URL with a different filter name.
-    renderable_url = RenderableUrl("different-decoder-name", None)
+    renderable_url = RenderableItem("different-decoder-name", None)
     self.assertFalse(type_filter(renderable_url))
     # Pass an URL with the same filter name.
-    renderable_url = RenderableUrl(filter_name, None)
+    renderable_url = RenderableItem(filter_name, None)
     self.assertTrue(type_filter(renderable_url))
 
 

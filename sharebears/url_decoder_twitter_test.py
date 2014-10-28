@@ -29,6 +29,12 @@ class TwitterTimelineUrlDecoderTest(UrlDecoderTestCase):
     expected_dict = { "url": url }
     self.assertDictEqual(expected_dict, self.url_decoder.decode_url(url, parsed_url))
 
+  def test_item_for_rendering(self):
+    url = "https://twitter.com/omgitsmgp"
+    decoded_url = { "url": url }
+    item = self.url_decoder.item_for_rendering(decoded_url)
+    self.assertEqual(url, item.url)
+
 
 class TwitterTweetUrlDecoderTest(UrlDecoderTestCase):
   def setUp(self):
@@ -54,6 +60,12 @@ class TwitterTweetUrlDecoderTest(UrlDecoderTestCase):
     parsed_url = self._parse_url(url)
     expected_dict = { "url": url }
     self.assertDictEqual(expected_dict, self.url_decoder.decode_url(url, parsed_url))
+
+  def test_item_for_rendering(self):
+    url = "https://twitter.com/omgitsmgp/status/524646360750891008"
+    decoded_url = { "url": url }
+    item = self.url_decoder.item_for_rendering(decoded_url)
+    self.assertEqual(url, item.url)
 
 
 def suite():

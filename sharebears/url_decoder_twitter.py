@@ -11,6 +11,14 @@ class _TwitterUrlDecoder(UrlDecoder):
     return True
 
 
+
+class TwitterTimelineItem:
+  """A Twitter timeline for a RenderableItem."""
+
+  def __init__(self, decoded_url):
+    self.url = decoded_url["url"]
+
+
 class TwitterTimelineUrlDecoder(_TwitterUrlDecoder):
   """Embeds the timeline of a Twitter user."""
 
@@ -33,9 +41,16 @@ class TwitterTimelineUrlDecoder(_TwitterUrlDecoder):
     # See https://dev.twitter.com/web/embedded-timelines
     return { "url": url }
 
-  def render_decoded_url(self, decoded_url):
-    # TODO
-    pass
+  def item_for_rendering(self, decoded_url):
+    return TwitterTimelineItem(decoded_url)
+
+
+
+class TwitterTweetItem:
+  """A tweet for a RenderableItem."""
+
+  def __init__(self, decoded_url):
+    self.url = decoded_url["url"]
 
 
 class TwitterTweetUrlDecoder(_TwitterUrlDecoder):
@@ -60,7 +75,6 @@ class TwitterTweetUrlDecoder(_TwitterUrlDecoder):
     # See https://dev.twitter.com/web/embedded-tweets
     return { "url": url }
 
-  def render_decoded_url(self, decoded_url):
-    # TODO
-    pass
+  def item_for_rendering(self, decoded_url):
+    return TwitterTweetItem(decoded_url)
 

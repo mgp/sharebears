@@ -12,6 +12,31 @@ class _GitHubUrlDecoder(UrlDecoder):
     return True
 
 
+class GitHubRepositoryOwnerItem:
+  """The owner in a GitHubRepositoryItem."""
+
+  def __init__(self, decoded_owner):
+    self.login = decoded_owner["login"]
+    self.avatar_url = decoded_owner["avatar_url"]
+    self.html_url = decoded_owner["html_url"]
+
+
+class GitHubRepositoryItem:
+  """A GitHub repository for a RenderableItem."""
+
+  def __init__(self, decoded_url):
+    self.name = decoded_url["name"]
+    self.description = decoded_url["description"]
+    self.html_url = decoded_url["html_url"]
+    self.forks_count = decoded_url["forks_count"]
+    self.stargazers_count = decoded_url["stargazers_count"]
+    self.watchers_count = decoded_url["watchers_count"]
+    self.created_at = url_decoder.to_datetime(decoded_url["created_at"])
+    self.updated_at = url_decoder.to_datetime(decoded_url["updated_at"])
+
+    self.owner = GitHubRepositoryOwnerItem(decoded_url["owner"])
+
+
 class GitHubRepositoryUrlDecoder(_GitHubUrlDecoder):
   """Renders a GitHub repository."""
 
@@ -67,9 +92,30 @@ class GitHubRepositoryUrlDecoder(_GitHubUrlDecoder):
     json = self.github_client.get_repository(owner, repo)
     return self._filter_json(json)
 
-  def render_decoded_url(self, decoded_url):
-    # TODO
-    pass
+  def item_for_rendering(self, decoded_url):
+    return GitHubRepositoryItem(decoded_url)
+
+
+
+class GitHubCommitUserItem:
+  """A user in a GitHubCommitItem."""
+
+  def __init__(self, decoded_user):
+    self.name = decoded_user["name"]
+    self.email = decoded_user["email"]
+    self.date = url_decoder.to_datetime(decoded_user["date"])
+
+
+class GitHubCommitItem:
+  """A GitHub commit for a RenderableItem."""
+
+  def __init__(self, decoded_url):
+    self.sha = decoded_url["sha"]
+    self.url = decoded_url["url"]
+    self.message = decoded_url["message"]
+
+    self.author = GitHubCommitUserItem(decoded_url["author"])
+    self.committer = GitHubCommitUserItem(decoded_url["committer"])
 
 
 class GitHubCommitUrlDecoder(_GitHubUrlDecoder):
@@ -116,9 +162,16 @@ class GitHubCommitUrlDecoder(_GitHubUrlDecoder):
     json = self.github_client.get_commit(owner, repo, sha)
     return self._filter_json(json)
 
-  def render_decoded_url(self, decoded_url):
-    # TODO
-    pass
+  def item_for_rendering(self, decoded_url):
+    return GitHubCommitItem(decoded_url)
+
+
+
+class GitHubGistItem:
+  """A GitHub Gist for a RenderableItem."""
+
+  def __init__(self, decoded_url):
+    self.url = decoded_url["url"]
 
 
 class GitHubGistUrlDecoder(UrlDecoder):
@@ -142,7 +195,6 @@ class GitHubGistUrlDecoder(UrlDecoder):
     # Use an embedded Gist.
     return { "url": url }
 
-  def render_decoded_url(self, decoded_url):
-    # TODO
-    pass
+  def item_for_rendering(self, decoded_url):
+    return GitHubGistItem(decoded_url)
 

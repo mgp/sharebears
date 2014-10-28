@@ -2,6 +2,13 @@ import url_decoder
 from url_decoder import UrlDecoder, UrlDecoderException
 
 
+class ImageItem:
+  """An image for a RenderableItem."""
+
+  def __init__(self, decoded_url):
+    self.url = decoded_url["url"]
+
+
 class ImageUrlDecoder(UrlDecoder):
   """Embeds an image."""
 
@@ -20,7 +27,6 @@ class ImageUrlDecoder(UrlDecoder):
   def decode_url(self, url, parsed_url):
     return { "url": url }
 
-  def render_decoded_url(self, decoded_url):
-    # TODO
-    pass
+  def item_for_rendering(self, decoded_url):
+    return ImageItem(decoded_url)
 

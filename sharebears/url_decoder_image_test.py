@@ -33,6 +33,12 @@ class ImageUrlDecoderTest(UrlDecoderTestCase):
     expected_dict = { "url": url }
     self.assertDictEqual(expected_dict, self.url_decoder.decode_url(url, parsed_url))
 
+  def test_item_for_rendering(self):
+    url = "https://www.khanacademy.org/images/image.png"
+    decoded_url = { "url": url }
+    item = self.url_decoder.item_for_rendering(decoded_url)
+    self.assertEqual(url, item.url)
+
 
 def suite():
   suite = unittest.TestSuite()
