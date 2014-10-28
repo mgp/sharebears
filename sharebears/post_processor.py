@@ -1,6 +1,8 @@
 import urlparse
 
-from parser import Parser, Token
+import parser
+from parser import Token
+from renderable_item import RenderableItem
 
 
 class ProcessedPost:
@@ -17,7 +19,7 @@ class PostProcessor:
   _DECODED_URL_TYPE_PREFIX = "%s-" % _URL_TYPE
 
   def __init__(self, decoders):
-    self._parser = Parser(decoders)
+    self._decoders = decoders
 
 
   @staticmethod
@@ -37,11 +39,25 @@ class PostProcessor:
       return decoder_type[len(PostProcessor._DECODED_URL_TYPE_PREFIX):]
     raise Exception("Unknown decoder type: %s" % decoder_type)
 
+  def _decoder_for_url(self, url):
+    """Returns the decoder that matches the given URL, if any."""
+    for decoder in self._decoders:
+      if decoder.can_decode_url(url):
+        return decoder
+    return None
+
+  @staticmethod
+  def decode_url(url, decoder):
+    """Decodes the given URL using the given decoder."""
+    parsed_url = urlparse.urlparse(url)
+    decoded_url = decoder.decode_url(url, parsed_url)
+    return decoded_url
+
 
   def process(self, string):
     """Returns a ProcessedPost instance from the given string."""
 
-    parser_tokens = self._parser.parse(string)
+    parser_tokens = parser.parse(string)
 
     data = []
     hash_tags = []
@@ -55,14 +71,12 @@ class PostProcessor:
         if token_value not in hash_tags:
           hash_tags.append(token_value)
       elif token_type == Token.URL:
-        token_decoder = parser_token.decoder
+        token_decoder = self._decoder_for_url(token_value)
         if token_decoder == None:
           data.append(PostProcessor._make_data_element(PostProcessor._URL_TYPE, token_value))
         else:
-          url = token_value
-          parsed_url = urlparse.urlparse(url)
-          decoded_url = token_decoder.decode_url(url, parsed_url)
           decoder_type = PostProcessor._type_for_decoder(token_decoder)
+          decoded_url = self.decode_url(token_value, token_decoder)
           data.append(PostProcessor._make_data_element(decoder_type, decoded_url))
       else:
         raise Exception("Unknown token type: %s" % token_type)
@@ -70,15 +84,20 @@ class PostProcessor:
     return ProcessedPost(data, hash_tags)
 
 
+  def _renderable_item_for_data(data_element):
+    element_type = data_element["type"]
+    element_value = data_element["value"]
+    if element_type == PostProcessor._TEXT_TYPE:
+      return RenderableItem.for_text(element_value)
+    elif element_type == PostProcessor._URL_TYPE:
+      return RenderableItem.for_url(element_value)
+    else:
+      decoder_name = PostProcessor._name_for_decoder_type(element_type)
+      pass
+
+
   def renderable_items(self, post_data):
     """Returns a sequence of RenderableItems from the given processed post."""
 
-    for data_element in post_data:
-      element_type = data_element["type"]
-      if element_type == PostProcessor._TEXT_TYPE:
-        pass
-      elif element_type == PostProcessor._URL_TYPE:
-        pass
-      elif element_type == "TODO":
-        pass
+    return [_self.renderable_item_for_data_element(element) for element in post_data]
 
