@@ -38,7 +38,7 @@ class Parser:
     # https://github.com/django/django/blob/695956376ff09b0d6fd5c438f912b9eb05459145/django/core/validators.py#L68
     return token_string.startswith("http://") or token_string.startswith("https://")
 
-  def decoder_for_url(self, url):
+  def _decoder_for_url(self, url):
     """Returns the decoder that matches the given URL, if any."""
     for decoder in self.decoders:
       if decoder.matches_url(url):
@@ -68,7 +68,7 @@ class Parser:
     for token_string in token_strings:
       token = None
       if Parser._is_url(token_string):
-        decoder = self.decoder_for_url(token_string)
+        decoder = self._decoder_for_url(token_string)
         token = UrlToken(token_string, decoder)
       else:
         token = Token.text(token_string)
