@@ -6,7 +6,7 @@
 
     <div class="content">
       {% for item in post.renderable_items %}
-        <!-- TODO -->
+        {{ render_item(item) }}
       {% endfor %}
     </div>
 

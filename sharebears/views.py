@@ -7,6 +7,7 @@ import authn_google
 import authz
 import db
 from db import PaginatedSequence
+import filters
 import json
 from post_processor import PostProcessor
 from renderable_item import RenderablePost
@@ -14,6 +15,9 @@ import requests
 from url_decoder_image import ImageUrlDecoder
 from url_decoder_twitter import TwitterTweetUrlDecoder
 from url_decoder_youtube import YouTubeUrlDecoder
+
+
+filters.add_to_environment(app.jinja_env)
 
 
 def _get_post_processor():

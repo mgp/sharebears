@@ -39,3 +39,6 @@ class ParagraphItem:
   def __init__(self, child_items):
     self.child_items = child_items
 
+  def __repr__(self):
+    return "ParagraphItem(child_items=%r)" % self.child_items
+

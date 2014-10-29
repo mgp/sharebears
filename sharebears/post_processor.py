@@ -1,7 +1,9 @@
 import urlparse
 
+import album_item
 import parser
 from parser import Token
+import paragraph_item
 from renderable_item import RenderableItem
 
 
@@ -40,19 +42,12 @@ class PostProcessor:
       return decoder_type[len(PostProcessor._DECODED_URL_TYPE_PREFIX):]
     raise Exception("Unknown decoder type: %s" % decoder_type)
 
-  def _decoder_for_url(self, url):
+  def _decoder_for_url(self, url, parsed_url):
     """Returns the decoder that matches the given URL, if any."""
     for decoder in self._decoders:
-      if decoder.can_decode_url(url):
+      if decoder.can_decode_url(url, parsed_url):
         return decoder
     return None
-
-  @staticmethod
-  def decode_url(url, decoder):
-    """Decodes the given URL using the given decoder."""
-    parsed_url = urlparse.urlparse(url)
-    decoded_url = decoder.decode_url(url, parsed_url)
-    return decoded_url
 
 
   def process(self, string):
@@ -72,12 +67,14 @@ class PostProcessor:
         if token_value not in hash_tags:
           hash_tags.append(token_value)
       elif token_type == Token.URL:
-        token_decoder = self._decoder_for_url(token_value)
+        url = token_value
+        parsed_url = urlparse.urlparse(url)
+        token_decoder = self._decoder_for_url(url, parsed_url)
         if token_decoder == None:
           data.append(PostProcessor._make_data_element(PostProcessor._URL_TYPE, token_value))
         else:
           decoder_type = PostProcessor._type_for_decoder(token_decoder)
-          decoded_url = self.decode_url(token_value, token_decoder)
+          decoded_url = token_decoder.decode_url(url, parsed_url)
           data.append(PostProcessor._make_data_element(decoder_type, decoded_url))
       else:
         raise Exception("Unknown token type: %s" % token_type)
@@ -99,8 +96,16 @@ class PostProcessor:
       return RenderableItem.for_renderer(decoder_name, item)
 
 
+  _RENDERABLE_ITEM_TRANSFORMERS = [
+      album_item.insert_albums,
+      paragraph_item.insert_paragraphs,
+  ]
+
   def renderable_items(self, post_data):
     """Returns a sequence of RenderableItems from the given processed post."""
 
-    return [self._renderable_item_for_data_element(element) for element in post_data]
+    renderable_items = [self._renderable_item_for_data_element(element) for element in post_data]
+    for item_transformer in PostProcessor._RENDERABLE_ITEM_TRANSFORMERS:
+      renderable_items = item_transformer(renderable_items)
+    return renderable_items
 

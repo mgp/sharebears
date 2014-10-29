@@ -1,0 +1,27 @@
+{% macro render_item(renderable_item) -%}
+  {% if renderable_item|isparagraph %}
+    {{ _render_paragraph(renderable_item.item) }}
+  {% endif %}
+{%- endmacro %}
+
+{% macro _render_paragraph(paragraph) -%}
+  <p>
+    {% for renderable_item in paragraph.child_items %}
+      {% if renderable_item|istext %}
+        {{ _render_text(renderable_item.item) }}
+      {% elif renderable_item|isurl %}
+        {{ _render_url(renderable_item.item) }}
+      {% endif %}
+    {% endfor %}
+  </p>
+{%- endmacro %}
+
+
+{% macro _render_text(text) -%}
+  {{ text}}
+{%- endmacro %}
+
+{% macro _render_url(url) -%}
+  <a href="{{ url }}">{{ url }}</a>
+{%- endmacro %}
+
