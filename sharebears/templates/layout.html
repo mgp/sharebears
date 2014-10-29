@@ -1,17 +1,9 @@
-{% import 'macros.html' as macros %}
-
 <!doctype html>
 <html lang="en">
   <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='reset.css') }}" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    {% assets "app_js" %}
-      <script src="{{ ASSET_URL }}"></script>
-    {% endassets %}
     {% block head %}{% endblock head %}
-    {% assets "all_css" %}
-      <link rel="stylesheet" href="{{ ASSET_URL }}" />
-    {% endassets %}
     <title>{% block title %}{% block page_name %}{% endblock page_name %} - Sharebears{% endblock title %}</title>
   </head>
 
@@ -26,7 +18,7 @@
         </div>
       {% endif %}
 
-      <h1><a href="{{ url_for('home') }}">Sharebears</a></h1>
+      <h1><a href="{{ url_for('posts') }}">Sharebears</a></h1>
     </header>
 
     <main class="clearfix">
