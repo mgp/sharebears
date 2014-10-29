@@ -7,7 +7,10 @@ import authn_google
 import authz
 import db
 from db import PaginatedSequence
+import json
 from post_processor import PostProcessor
+from renderable_item import RenderablePost
+import requests
 from url_decoder_image import ImageUrlDecoder
 from url_decoder_twitter import TwitterTweetUrlDecoder
 from url_decoder_youtube import YouTubeUrlDecoder
@@ -27,7 +30,8 @@ post_processor = _get_post_processor()
 
 def _get_renderable_post(post):
   """Returns a RenderablePost instance from the given Post."""
-  renderable_items = post_processor.renderable_items(post.data)
+  data = json.loads(post.data)
+  renderable_items = post_processor.renderable_items(data)
   return RenderablePost(post.id,
       post.creator,
       post.created_datetime,
@@ -57,7 +61,8 @@ def _add_post(user_id, text):
   This method returns the identifier of the added post.
   """
   processed_post = post_processor.process(text)
-  post_id = db.add_post(user_id, processed_post.data, processed_post.hash_tags)
+  data_string = json.dumps(processed_post.data)
+  post_id = db.add_post(user_id, data_string, processed_post.hash_tags)
   return post_id
 
 
@@ -69,12 +74,12 @@ def add_post():
   user_id = request_form["user_id"]
   text = request_form["text"]
 
-  post_id = self._add_post(user_id, text)
+  post_id = _add_post(user_id, text)
   if post_id:
     post_url = flask.url_for("post", post_id=post_id)
-    rendered_template = render_template("post_added.html")
+    rendered_template = flask.render_template("post_added.html", post_url=post_url)
     # Return status code 201 Created.
-    response = make_response(rendered_template, requests.codes.created)
+    response = flask.make_response(rendered_template, requests.codes.created)
     # Return the URL for the post in the Location header.
     response.headers["Location"] = post_url
     return response 
@@ -88,6 +93,9 @@ _POST_PATH = "%s/<post_id>" % _POSTS_PATH
 @authz.login_required
 def post(post_id):
   post = db.get_post(post_id)
+  if not post:
+    flask.abort(requests.codes.not_found)
+
   renderable_post = _get_renderable_post(post)
   return flask.render_template("post.html", post=renderable_post)
 
@@ -158,4 +166,11 @@ def page_not_found(e):
 @app.errorhandler(requests.codes.server_error)
 def internal_server_error(e):
   return flask.render_template("error_500.html"), 500
+
+
+if app.config["DEBUG"]:
+  @app.route("/new_post")
+  @authz.login_required
+  def new_post():
+    return flask.render_template("new_post.html", action=flask.url_for("add_post"))
 

@@ -16,25 +16,23 @@
             <a href="{{ url_for('logout') }}">Log out</a>
           </nav>
         </div>
+      {% else %}
+        <nav>
+          <a href="{{ url_for('log_in_google') }}">Log in with Google</a>
+        </nav>
       {% endif %}
 
       <h1><a href="{{ url_for('posts') }}">Sharebears</a></h1>
     </header>
 
     <main class="clearfix">
-      {% if g.logged_in %}
-        <!--
-        <div id="sidebar">
-        </div>
-        -->
-        <div id="content">
-          {% block content %}{% endblock content %}
-        </div>
-      {% else %}
-        <nav>
-          <a href="{{ url_for('log_in_google') }}">Log in with Google</a>
-        </nav>
-      {% endif %}
+      <!--
+      <div id="sidebar">
+      </div>
+      -->
+      <div id="content">
+        {% block content %}{% endblock content %}
+      </div>
     </main>
 
     <!--

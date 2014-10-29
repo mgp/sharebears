@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <form action="{{ action }}" method="post">
+    <div>
+      user ID: <input type="text" name="user_id">
+    </div>
+    <div>
+      text: <input type="text" name="text">
+    </div>
+
+    <input type="submit" value="Submit">
+  </form>
+{% endblock content %}
+
