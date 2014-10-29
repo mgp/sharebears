@@ -3,6 +3,7 @@ import requests
 
 from sharebears import app
 
+import authn_google
 import authz
 import db
 from db import PaginatedSequence

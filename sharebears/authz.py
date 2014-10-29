@@ -7,8 +7,8 @@ def _get_client_values(client):
   """Assigns values from the session to the request globals"""
 
   flask.g.logged_in = True
-  flask.g.auth_method = client['auth_method']
-  flask.g.user_id = client['user_id']
+  flask.g.auth_method = client["auth_method"]
+  flask.g.user_id = client["user_id"]
 
 
 def login_required(f):
@@ -44,7 +44,7 @@ def login_optional(f):
 
   @functools.wraps(f)
   def decorated_function(*pargs, **kwargs):
-    client = flask.session.get('client', None)
+    client = flask.session.get("client", None)
     if client:
       _get_client_values(client)
     else:
