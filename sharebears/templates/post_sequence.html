@@ -1,8 +1,14 @@
+{% from "render_post_macro.html" import render_post %}
+
 {% extends "layout.html" %}
 
 {% block content %}
   <h3>{% block sequence_header %}{% endblock sequence_header %}</h3>
 
-  <!-- TODO -->
+  <ol class="post-sequence">
+    {% for post in posts %}
+      {{ render_post(post) }}
+    {% endfor %}
+  </ol>
 {% endblock content %}
 

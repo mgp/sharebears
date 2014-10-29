@@ -55,8 +55,8 @@ def _get_renderable_post_sequence(post_sequence):
 @authz.login_optional
 def posts():
   all_posts = db.get_posts()
-  renderable_posts = _get_renderable_post_sequence(all_posts)
-  return flask.render_template("all_posts.html", all_posts=renderable_posts)
+  renderable_all_posts = _get_renderable_post_sequence(all_posts)
+  return flask.render_template("all_posts.html", posts=renderable_all_posts)
 
 
 def _add_post(user_id, text):
@@ -128,9 +128,9 @@ def unstar(post_id):
 @app.route("/hashtag/<hash_tag>")
 @authz.login_required
 def posts_with_hashtag(hash_tag):
-  hashtag_posts = db.get_posts_with_hashtag(hash_tag)
-  renderable_hashtag_posts = _get_renderable_post_sequence(hashtag_posts)
-  return flask.render_template("hashtag_posts.html", hashtag_posts=renderable_hashtag_posts)
+  hash_tag_posts = db.get_posts_with_hashtag(hash_tag)
+  renderable_hash_tag_posts = _get_renderable_post_sequence(hash_tag_posts)
+  return flask.render_template("hashtag_posts.html", hash_tag=hash_tag, posts=renderable_hash_tag_posts)
 
 
 @app.route("/user/<user_id>")
@@ -138,7 +138,7 @@ def posts_with_hashtag(hash_tag):
 def posts_by_user(user_id):
   user_posts = db.get_posts_by_user(user_id)
   renderable_user_posts = _get_renderable_post_sequence(user_posts)
-  return flask.render_template("user_posts.html", user_posts=renderable_user_posts)
+  return flask.render_template("user_posts.html", user_id=user_id, posts=renderable_user_posts)
 
 
 @app.route("/logout")
