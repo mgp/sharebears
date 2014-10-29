@@ -42,9 +42,8 @@ def _get_renderable_post_sequence(post_sequence):
   return PaginatedSequence(renderable_posts)
 
 
-_POSTS_PATH = "/posts"
-@app.route(_POSTS_PATH, methods=["GET"])
-@authz.login_required
+@app.route('/', methods=["GET"])
+@authz.login_optional
 def posts():
   all_posts = db.get_posts()
   renderable_posts = _get_renderable_post_sequence(all_posts)
@@ -61,6 +60,7 @@ def _add_post(user_id, text):
   return post_id
 
 
+_POSTS_PATH = "/posts"
 @app.route(_POSTS_PATH, methods=["POST"])
 @authz.login_required
 def add_post():
@@ -128,33 +128,33 @@ def posts_by_user(user_id):
   return flask.render_template("user_posts.html", user_posts=renderable_user_posts)
 
 
-@app.route('/logout')
+@app.route("/logout")
 def logout():
   # Remove all client data from the session.
-  flask.session.pop('client', None)
+  flask.session.pop("client", None)
   # Redirect to the URL that the user came from.
-  next_url = flask.request.args.get('next_url')
+  next_url = flask.request.args.get("next_url")
   if next_url is None:
-    next_url = flask.url_for('home')
+    next_url = flask.url_for("posts")
   return flask.redirect(next_url)
 
 
 @app.errorhandler(requests.codes.unauthorized)
 def unauthorized(e):
-  response = 'unauthorized'
+  response = "unauthorized"
   status = requests.codes.unauthorized
   headers = {
-    'Content-Type': 'text/plain; charset=utf-8',
+    "Content-Type": "text/plain; charset=utf-8",
   }
   return flask.make_response((response, status, headers))
 
 
 @app.errorhandler(requests.codes.not_found)
 def page_not_found(e):
-  return flask.render_template('error_404.html'), 404
+  return flask.render_template("error_404.html"), 404
 
 
 @app.errorhandler(requests.codes.server_error)
 def internal_server_error(e):
-  return flask.render_template('error_500.html'), 500
+  return flask.render_template("error_500.html"), 500
 
