@@ -1,5 +1,6 @@
 import flask
 import functools
+import requests
 
 
 def _get_client_values(client):
