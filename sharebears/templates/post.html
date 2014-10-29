@@ -1,6 +1,8 @@
+{% from "render_post_macro.html" import render_post %}
+
 {% extends "layout.html" %}
 
 {% block content %}
-  <!-- TODO -->
+  {{ render_post(post) }}
 {% endblock content %}
 

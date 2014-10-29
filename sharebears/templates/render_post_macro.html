@@ -1,0 +1,22 @@
+{% from "render_item_macro.html" import render_item %}
+
+{% macro render_post(post) -%}
+  <div class="post">
+    <div class="byline">by @{{ post.creator }}</div>
+
+    <div class="content">
+      {% for item in post.renderable_items %}
+        <!-- TODO -->
+      {% endfor %}
+    </div>
+
+    {% if post.hash_tags %}
+      <ul class="hash-tags">
+        {% for hash_tag in post.hash_tags %}
+          <li><a href="{{ url_for("posts_with_hashtag", hash_tag=hash_tag) }}">#{{ hash_tag }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+{%- endmacro %}
+
