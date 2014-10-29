@@ -13,7 +13,7 @@ app.jinja_env.trim_blocks = app.config['JINJA_TRIM_BLOCKS']
 import db
 import db_util
 import db_schema
-engine = db_util.init_db(app.config['DATABASE_NAME'], app.config['DATABASE_URI'])
+engine = db_util.init_db(app.config["DATABASE_NAME"], app.config["DATABASE_URI"])
 db_schema.create_all_tables(engine) 
 
 # Register the handlers.
