@@ -3,6 +3,7 @@ import unittest
 import album_item_test 
 import db_test
 import filters_test
+import paragraph_item_test
 import parser_test
 import post_processor_test
 import renderable_item_test
@@ -18,6 +19,7 @@ def suite():
   suite.addTest(album_item_test.suite())
   suite.addTest(db_test.suite())
   suite.addTest(filters_test.suite())
+  suite.addTest(paragraph_item_test.suite())
   suite.addTest(parser_test.suite())
   suite.addTest(post_processor_test.suite())
   suite.addTest(renderable_item_test.suite())
