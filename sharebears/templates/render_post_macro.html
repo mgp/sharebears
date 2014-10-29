@@ -2,7 +2,7 @@
 
 {% macro render_post(post) -%}
   <div class="post">
-    <div class="byline">by @{{ post.creator }}</div>
+    <div class="byline">by <a href="{{ url_for("posts_by_user", user_id=post.creator) }}">@{{ post.creator }}</a></div>
 
     <div class="content">
       {% for item in post.renderable_items %}
