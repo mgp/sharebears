@@ -20,6 +20,7 @@ class PostProcessor:
 
   def __init__(self, decoders):
     self._decoders = decoders
+    self._decoders_by_name = {decoder.name(): decoder for decoder in decoders}
 
 
   @staticmethod
@@ -84,7 +85,7 @@ class PostProcessor:
     return ProcessedPost(data, hash_tags)
 
 
-  def _renderable_item_for_data(data_element):
+  def _renderable_item_for_data_element(self, data_element):
     element_type = data_element["type"]
     element_value = data_element["value"]
     if element_type == PostProcessor._TEXT_TYPE:
@@ -93,11 +94,13 @@ class PostProcessor:
       return RenderableItem.for_url(element_value)
     else:
       decoder_name = PostProcessor._name_for_decoder_type(element_type)
-      pass
+      decoder = self._decoders_by_name[decoder_name]
+      item = decoder.item_for_rendering(element_value)
+      return RenderableItem.for_renderer(decoder_name, item)
 
 
   def renderable_items(self, post_data):
     """Returns a sequence of RenderableItems from the given processed post."""
 
-    return [_self.renderable_item_for_data_element(element) for element in post_data]
+    return [self._renderable_item_for_data_element(element) for element in post_data]
 

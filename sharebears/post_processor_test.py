@@ -2,6 +2,7 @@ import unittest
 import urlparse
 
 from post_processor import PostProcessor
+from renderable_item import RenderableItem
 from test_util import TestDecoder
 
 class PostProcessorTest(unittest.TestCase):
@@ -10,6 +11,7 @@ class PostProcessorTest(unittest.TestCase):
     self.decoder0 = TestDecoder("decoder0", "http://decoder0")
     self.decoder1 = TestDecoder("decoder1", "http://decoder1")
     self.processor = PostProcessor([self.decoder0, self.decoder1])
+
 
   def _assert_element(self, element, expected_type, expected_value):
     self.assertEqual(expected_type, element["type"])
@@ -68,6 +70,60 @@ class PostProcessorTest(unittest.TestCase):
     self._assert_recognized_url_element(processed_post.data[0], url0, self.decoder0)
     self._assert_recognized_url_element(processed_post.data[1], url1, self.decoder1)
     self.assertEqual(0, len(processed_post.hash_tags))
+
+
+  def _assert_text_item(self, renderable_item, expected_text):
+    self.assertEqual(RenderableItem.TEXT_TYPE, renderable_item.type)
+    self.assertEqual(expected_text, renderable_item.item)
+
+  def _assert_url_item(self, renderable_item, expected_url):
+    self.assertEqual(RenderableItem.URL_TYPE, renderable_item.type)
+    self.assertEqual(expected_url, renderable_item.item)
+
+  def _assert_decoded_url_item(self, renderable_item, decoded_url, expected_decoder):
+    expected_item = expected_decoder.item_for_rendering(decoded_url)
+    self.assertEqual(expected_decoder.name(), renderable_item.get_renderer_name())
+    self.assertEqual(expected_item, renderable_item.item)
+
+
+  def test_render_empty(self):
+    renderable_items = self.processor.renderable_items([])
+    self.assertEqual(0, len(renderable_items))
+
+  def test_render_only_text(self):
+    data = [
+        PostProcessor._make_data_element(PostProcessor._TEXT_TYPE, "text0"),
+        PostProcessor._make_data_element(PostProcessor._TEXT_TYPE, "text1")
+    ]
+    renderable_items = self.processor.renderable_items(data)
+    self.assertEqual(2, len(renderable_items))
+    self._assert_text_item(renderable_items[0], "text0")
+    self._assert_text_item(renderable_items[1], "text1")
+
+  def test_render_only_unrecognized_urls(self):
+    data = [
+        PostProcessor._make_data_element(PostProcessor._URL_TYPE, "http://url0"),
+        PostProcessor._make_data_element(PostProcessor._URL_TYPE, "http://url1")
+    ]
+    renderable_items = self.processor.renderable_items(data)
+    self.assertEqual(2, len(renderable_items))
+    self._assert_url_item(renderable_items[0], "http://url0")
+    self._assert_url_item(renderable_items[1], "http://url1")
+
+  def test_render_only_recognized_url(self):
+    url0 = "http://decoder0/path0"
+    url1 = "http://decoder1/path1"
+    decoder0_type = PostProcessor._type_for_decoder(self.decoder0)
+    decoder1_type = PostProcessor._type_for_decoder(self.decoder1)
+    data = [
+        PostProcessor._make_data_element(decoder0_type, url0),
+        PostProcessor._make_data_element(decoder1_type, url1)
+    ]
+    renderable_items = self.processor.renderable_items(data)
+    self.assertEqual(2, len(renderable_items))
+    self._assert_decoded_url_item(renderable_items[0], url0, self.decoder0)
+    self._assert_decoded_url_item(renderable_items[1], url1, self.decoder1)
+
 
 
 def suite():

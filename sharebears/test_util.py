@@ -12,3 +12,6 @@ class TestDecoder:
   def decode_url(self, url, parsed_url):
     return "decoded-%s" % url
 
+  def item_for_rendering(self, decoded_url):
+    return "rendered-%s" % decoded_url
+
