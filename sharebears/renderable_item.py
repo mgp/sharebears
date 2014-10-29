@@ -26,8 +26,33 @@ class RenderableItem:
     self.type = type
     self.item = item
 
+  def __repr__(self):
+    return "RenderableItem(type=%r, item=%r)" % (self.type, self.item)
+
   def get_renderer_name(self):
     if self.type.startswith(RenderableItem._RENDERER_TYPE_PREFIX):
       return self.type[len(RenderableItem._RENDERER_TYPE_PREFIX):]
     return None
+
+
+
+class RenderablePost:
+  """A post that is ready for rendering."""
+
+  def __init__(self, id, creator, created_datetime, renderable_items, num_stars, hash_tags):
+    self.id = id
+    self.creator = creator
+    self.created_datetime = created_datetime
+    self.renderable_items = renderable_items
+    self.num_stars = num_stars
+    self.hash_tags = hash_tags
+
+  def __repr__(self):
+    return "RenderablePost(id=%r, creator=%r, created=%r, items=%r, num_stars=%r, hash_tags=%r)" % (
+        self.id,
+        self.creator,
+        self.created_datetime,
+        self.renderable_items,
+        self.num_stars,
+        self.hash_tags)
 
