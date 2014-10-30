@@ -8,6 +8,7 @@
     {% if resource_summary %}
       {{ include_head_resources(resource_summary) }}
     {% endif %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/style.css") }}" />
   </head>
 
   <body>

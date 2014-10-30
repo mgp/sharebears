@@ -48,7 +48,7 @@
 {% macro _render_album(album) -%}
   <div class="image-album">
     {% for renderable_item in album.image_items %}
-      <div><img data-lazy="{{ renderable_item.item.url }}" /></div>
+      <a href="{{ renderable_item.item.url }}"><img src="{{ renderable_item.item.url }}" /></a>
     {% endfor %}
   </div>
 {%- endmacro %}
