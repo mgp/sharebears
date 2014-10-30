@@ -64,8 +64,16 @@ header .site-title {
   display: inline;
   margin-right: 0.5em;
 }
-.post-sequence-title {
+.post-sequence-title,
+.post-sequence-empty {
   font-size: 1.5em;
+}
+.post-sequence-empty {
+  text-align: center;
+  margin-top: 3em;
+  padding: 1em 0;
+  background-color: white;
+  border: 1px solid red;
 }
 
 /* Image album */
