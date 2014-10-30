@@ -24,7 +24,11 @@ class GitHubClient:
     self.password = password
 
   def _get_auth(self):
-    return HTTPBasicAuth(self.username, self.password)
+    # Unauthenticated requests are subject to more stringent rate limiting.
+    # For details see https://developer.github.com/v3/#rate-limiting.
+    if self.username and self.password:
+      return HTTPBasicAuth(self.username, self.password)
+    return None
 
   def _json_from_response_for_path(self, path):
     url = "%s/%s" % (_GitHubClient._ROOT_ENDPOINT, path)
