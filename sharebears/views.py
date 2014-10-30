@@ -25,8 +25,7 @@ filters.add_to_environment(app.jinja_env)
 
 def _get_post_processor():
   """Returns an PostProcessor configured with the default URL decoders."""
-  # TODO(mgp): Authenticate with GitHub.
-  github_client = GitHubClient(None, None)
+  github_client = GitHubClient.for_oauth_token("34a275e11f49e187512f67443bc11668a9b08fdd")
   decoders = [
       GitHubRepositoryUrlDecoder(github_client),
       ImageUrlDecoder(),

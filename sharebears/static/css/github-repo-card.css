@@ -1,6 +1,5 @@
 .github-repo-card {
     position: relative;
-    float: left;
     box-sizing: border-box;
     width: 440px;
     height: 285px;
@@ -19,37 +18,28 @@
     margin-left: 0;
 }
 
-.owner {
+.github-repo-card .owner {
     float: left;
     box-sizing: border-box;
     width: 95px;
     margin-left: 25px;
 }
 
-.avatar {
+.github-repo-card .avatar {
     display: block;
     width: 95px;
     height: 95px;
     margin-top: 40px;
-    margin-bottom: 0.5em;
+    margin-bottom: 5px;
     border-radius: 3px;
 }
 
-.username {
+.github-repo-card .username {
     color: #ccc;
-    min-height: 1.7em;
+    font-size: 16px;
 }
 
-.username a {
-    text-decoration: none;
-    color: rgb(151, 174, 55);
-}
-
-.username a:hover {
-    opacity: 0.6;
-}
-
-.repo-details {
+.github-repo-card .repo-details {
     position: absolute;
     z-index: 200;
 
@@ -60,37 +50,34 @@
     height: 100%;
 }
 
-.language {
+.github-repo-card .language {
     color: #aaa;
     font-size: 12px;
     font-weight: bold;
     text-transform: uppercase;
 }
 
-.title {
+.github-repo-card .title {
     font-family: 'proxima_nova_ltsemibold';
     font-size: 30px;
     font-weight: bold;
 }
 
-.title-long {
-    font-size: 29px;
-}
-
-.description {
+.github-repo-card .description {
     line-height: 1.35;
+    font-size: 18px;
     font-weight: 300;
     margin-bottom: 20px;
 }
 
-.actions {
+.github-repo-card .actions {
     position: absolute;
     bottom: 40px;
     left: 25px;
     right: 25px;
 }
 
-.button {
+.github-repo-card .button {
     text-decoration: none;
     display: block;
     text-align: center;
@@ -98,21 +85,12 @@
     color: rgb(151, 174, 55);
     border-radius: 5px;
     padding: 10px;
+    font-size: 18px;
 }
 
-.button:hover {
+.github-repo-card .button:hover {
     cursor: pointer;
     color: #fff;
     background-color: rgb(151, 174, 55);
-}
-
-@media (max-width: 915px) {
-    .main {
-        width: 100%;
-    }
-
-    .github-repo-card {
-        margin-left: 0;
-    }
 }
 
