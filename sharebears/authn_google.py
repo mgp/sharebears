@@ -38,7 +38,7 @@ def _get_client_json(access_token):
   response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers=headers)
   response_json = response.json()
 
-  domain = response_json["hd"]
+  domain = response_json.get("hd", None)
   if domain != app.config["GOOGLE_APP_DOMAIN"]:
     # This user is not part of this organization's domain.
     return None
