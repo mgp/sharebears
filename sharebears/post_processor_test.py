@@ -1,6 +1,7 @@
 import unittest
 import urlparse
 
+import paragraph_item
 from post_processor import PostProcessor
 from renderable_item import RenderableItem
 from test_util import TestDecoder
@@ -96,9 +97,16 @@ class PostProcessorTest(unittest.TestCase):
         PostProcessor._make_data_element(PostProcessor._TEXT_TYPE, "text1")
     ]
     renderable_items = self.processor.renderable_items(data)
-    self.assertEqual(2, len(renderable_items))
-    self._assert_text_item(renderable_items[0], "text0")
-    self._assert_text_item(renderable_items[1], "text1")
+    # One paragraph should be returned.
+    self.assertEqual(1, len(renderable_items))
+    renderable_item = renderable_items[0]
+    self.assertEqual(paragraph_item._PARAGRAPH_ITEM_TYPE, renderable_item.get_renderer_name())
+
+    # The unrecognized URLs should be its children.
+    paragraph_child_items = renderable_item.item.child_items
+    self.assertEqual(2, len(paragraph_child_items))
+    self._assert_text_item(paragraph_child_items[0], "text0")
+    self._assert_text_item(paragraph_child_items[1], "text1")
 
   def test_render_only_unrecognized_urls(self):
     data = [
@@ -106,9 +114,17 @@ class PostProcessorTest(unittest.TestCase):
         PostProcessor._make_data_element(PostProcessor._URL_TYPE, "http://url1")
     ]
     renderable_items = self.processor.renderable_items(data)
-    self.assertEqual(2, len(renderable_items))
-    self._assert_url_item(renderable_items[0], "http://url0")
-    self._assert_url_item(renderable_items[1], "http://url1")
+
+    # One paragraph should be returned.
+    self.assertEqual(1, len(renderable_items))
+    renderable_item = renderable_items[0]
+    self.assertEqual(paragraph_item._PARAGRAPH_ITEM_TYPE, renderable_item.get_renderer_name())
+
+    # The unrecognized URLs should be its children.
+    paragraph_child_items = renderable_item.item.child_items
+    self.assertEqual(2, len(paragraph_child_items))
+    self._assert_url_item(paragraph_child_items[0], "http://url0")
+    self._assert_url_item(paragraph_child_items[1], "http://url1")
 
   def test_render_only_recognized_url(self):
     url0 = "http://decoder0/path0"

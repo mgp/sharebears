@@ -6,7 +6,7 @@ class TestDecoder:
   def name(self):
     return self._name
 
-  def can_decode_url(self, url):
+  def can_decode_url(self, url, parsed_url):
     return url.startswith(self._matched_url_prefix)
 
   def decode_url(self, url, parsed_url):
