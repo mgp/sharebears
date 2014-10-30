@@ -7,6 +7,8 @@
     {{ _render_tweet(renderable_item.item) }}
   {% elif renderable_item|isyoutubevideo %}
     {{ _render_youtube_video(renderable_item.item, post_index, item_index) }}
+  {% elif renderable_item|isalbum %}
+    {{ _render_album(renderable_item.item) }}
   {% endif %}
 {%- endmacro %}
 
@@ -32,7 +34,7 @@
 {%- endmacro %}
 
 {% macro _render_image(image) -%}
-  <img src="{{ image.url }}">
+  <img src="{{ image.url }}" />
 {%- endmacro %}
 
 {% macro _render_tweet(tweet) -%}
@@ -41,5 +43,13 @@
 
 {% macro _render_youtube_video(youtube_video, post_index, item_index) -%}
   <div id="{{ youtube_video.video_id|youtubeplayerid(post_index, item_index) }}"></div>
+{%- endmacro %}
+
+{% macro _render_album(album) -%}
+  <div class="image-album">
+    {% for renderable_item in album.image_items %}
+      <div><img data-lazy="{{ renderable_item.item.url }}" /></div>
+    {% endfor %}
+  </div>
 {%- endmacro %}
 

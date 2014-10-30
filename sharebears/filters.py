@@ -1,3 +1,4 @@
+import album_item
 import paragraph_item
 from renderable_item import RenderableItem
 from url_decoder_image import ImageUrlDecoder
@@ -30,7 +31,5 @@ def add_to_environment(environment):
   env_filters["isimage"] = _has_renderer(ImageUrlDecoder.name())
   env_filters["istweet"] = _has_renderer(TwitterTweetUrlDecoder.name())
   env_filters["isyoutubevideo"] = _has_renderer(YouTubeUrlDecoder.name())
-
-  # TODO(mgp)
-  # env_filters["isalbum"] = None
+  env_filters["isalbum"] = _has_renderer(album_item._ALBUM_ITEM_TYPE)
 

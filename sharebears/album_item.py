@@ -17,16 +17,17 @@ def insert_albums(renderable_items):
 
   new_renderable_items = renderable_items[:1]
   for renderable_item in renderable_items[1:]:
-    if renderable_item.type == image_item_type:
+    if renderable_item.get_renderer_name() == image_item_type:
       last_renderable_item = new_renderable_items[-1]
-      if last_renderable_item.type == _ALBUM_ITEM_TYPE:
+      last_renderer_name = last_renderable_item.get_renderer_name()
+      if last_renderer_name == _ALBUM_ITEM_TYPE:
         # Append this photo to the ongoing album.
         last_renderable_item.item.image_items.append(renderable_item)
-      elif last_renderable_item.type == image_item_type:
+      elif last_renderer_name == image_item_type:
         # Create an album with this image and the preceding image.
         new_renderable_items.pop()
         album = AlbumItem([last_renderable_item, renderable_item])
-        album_item = RenderableItem(_ALBUM_ITEM_TYPE, album)
+        album_item = RenderableItem.for_renderer(_ALBUM_ITEM_TYPE, album)
         new_renderable_items.append(album_item)
       else:
         # A following image will create an album.

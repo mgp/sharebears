@@ -34,5 +34,17 @@
 
 
 {% macro include_body_resources(resource_summary) -%}
+  {% if resource_summary.has_albums %}
+    <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.3.13/slick.min.js"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $(".image-album").slick({
+          dots: true,
+          lazyLoad: "ondemand"
+        });
+      });
+    </script>
+  {% endif %}
 {%- endmacro %}
 

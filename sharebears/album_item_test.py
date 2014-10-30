@@ -10,13 +10,13 @@ class InsertAlbumsTest(unittest.TestCase):
   def _make_renderable_image_item(self, url):
     decoded_url = {"url": url }
     image_item = ImageItem(decoded_url)
-    return RenderableItem(ImageUrlDecoder.name(), image_item)
+    return RenderableItem.for_renderer(ImageUrlDecoder.name(), image_item)
 
   def _make_renderable_item(self):
-    return RenderableItem("other-type", None)
+    return RenderableItem.for_renderer("other-type", None)
 
   def _assert_album(self, renderable_item, expected_image_items):
-    self.assertEqual(renderable_item.type, album_item._ALBUM_ITEM_TYPE)
+    self.assertEqual(album_item._ALBUM_ITEM_TYPE, renderable_item.get_renderer_name())
 
     # Assert that the image items are equal.
     image_items = renderable_item.item.image_items
