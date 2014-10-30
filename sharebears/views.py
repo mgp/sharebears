@@ -11,6 +11,7 @@ import filters
 import json
 from post_processor import PostProcessor
 from renderable_item import RenderablePost
+import resource_summary
 import requests
 from url_decoder_image import ImageUrlDecoder
 from url_decoder_twitter import TwitterTweetUrlDecoder
@@ -56,7 +57,9 @@ def _get_renderable_post_sequence(post_sequence):
 def posts():
   all_posts = db.get_posts()
   renderable_all_posts = _get_renderable_post_sequence(all_posts)
-  return flask.render_template("all_posts.html", posts=renderable_all_posts)
+  summary = resource_summary.summary_for_renderable_post_sequence(renderable_all_posts)
+  return flask.render_template("all_posts.html",
+      posts=renderable_all_posts, resource_summary=summary)
 
 
 def _add_post(user_id, text):
@@ -101,7 +104,8 @@ def post(post_id):
     flask.abort(requests.codes.not_found)
 
   renderable_post = _get_renderable_post(post)
-  return flask.render_template("post.html", post=renderable_post)
+  summary = resource_summary.summary_for_renderable_post(renderable_post)
+  return flask.render_template("post.html", post=renderable_post, resource_summary=summary)
 
 
 @app.route("%s/stars" % _POST_PATH)
@@ -130,7 +134,9 @@ def unstar(post_id):
 def posts_with_hashtag(hash_tag):
   hash_tag_posts = db.get_posts_with_hashtag(hash_tag)
   renderable_hash_tag_posts = _get_renderable_post_sequence(hash_tag_posts)
-  return flask.render_template("hashtag_posts.html", hash_tag=hash_tag, posts=renderable_hash_tag_posts)
+  summary = resource_summary.summary_for_renderable_post_sequence(renderable_hash_tag_posts)
+  return flask.render_template("hashtag_posts.html",
+      hash_tag=hash_tag, posts=renderable_hash_tag_posts, resource_summary=summary)
 
 
 @app.route("/user/<user_id>")
@@ -138,7 +144,9 @@ def posts_with_hashtag(hash_tag):
 def posts_by_user(user_id):
   user_posts = db.get_posts_by_user(user_id)
   renderable_user_posts = _get_renderable_post_sequence(user_posts)
-  return flask.render_template("user_posts.html", user_id=user_id, posts=renderable_user_posts)
+  summary = resource_summary.summary_for_renderable_post_sequence(renderable_user_posts)
+  return flask.render_template("user_posts.html",
+      user_id=user_id, posts=renderable_user_posts, resource_summary=summary)
 
 
 @app.route("/logout")

@@ -1,10 +1,13 @@
+{% from "include_resources_macro.html" import include_resources %}
+
 <!doctype html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='reset.css') }}" />
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     {% block head %}{% endblock head %}
     <title>{% block title %}{% block page_name %}{% endblock page_name %} - Sharebears{% endblock title %}</title>
+    {% if resource_summary %}
+      {{ include_resources(resource_summary) }}
+    {% endif %}
   </head>
 
   <body>

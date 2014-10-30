@@ -1,6 +1,12 @@
 {% macro render_item(renderable_item) -%}
   {% if renderable_item|isparagraph %}
     {{ _render_paragraph(renderable_item.item) }}
+  {% elif renderable_item|isimage %}
+    {{ _render_image(renderable_item.item) }} 
+  {% elif renderable_item|istweet %}
+    {{ _render_tweet(renderable_item.item) }}
+  {% elif renderable_item|isyoutubevideo %}
+    {{ _render_youtube_video(renderable_item.item) }}
   {% endif %}
 {%- endmacro %}
 
@@ -18,10 +24,22 @@
 
 
 {% macro _render_text(text) -%}
-  {{ text}}
+  {{ text }}
 {%- endmacro %}
 
 {% macro _render_url(url) -%}
   <a href="{{ url }}">{{ url }}</a>
+{%- endmacro %}
+
+{% macro _render_image(image) -%}
+  <img src="{{ image.url }}">
+{%- endmacro %}
+
+{% macro _render_tweet(tweet) -%}
+  <blockquote class="twitter-tweet" lang="en"><a href="{{ tweet.url }}"></a></blockquote>
+{%- endmacro %}
+
+{% macro _render_youtube_video(youtube_video) -%}
+  <div id="{{ youtube_video.video_id|youtubeplayerid }}"></div>
 {%- endmacro %}
 
