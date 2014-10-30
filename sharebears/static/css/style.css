@@ -1,6 +1,6 @@
 /* Layout */
 body {
-    background-color: #eee;
+    background-color: whitesmoke;
     font-family: 'proxima_nova_rgregular';
 }
 header,
@@ -21,7 +21,10 @@ a {
 a:hover {
   opacity: 0.6;
 }
-
+ul, ol {
+  list-style-type: none;
+  padding: 0;
+}
 
 /* Header */
 header .page-title {
@@ -33,6 +36,34 @@ header .page-title {
   text-align: right;
 }
 
+
+/* Post */
+.post {
+  background-color: white;
+  padding: 1.25em;
+  margin: 2.5em 0;
+}
+.post .byline,
+.post .hash-tags {
+  margin: 0;
+  padding: 0;
+  font-size: 1.25em;
+}
+.post .content {
+  margin: 1em 0;
+  font-size: 1.5em;
+}
+.post .content > * {
+  margin: 0;
+  display: block;
+}
+.post .content > * + * {
+  margin-top: 1em;
+}
+.post .hash-tags li {
+  display: inline;
+  margin-right: 0.5em;
+}
 
 /* Image album */
 .post .image-album img {
