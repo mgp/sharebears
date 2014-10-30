@@ -1,6 +1,7 @@
 import album_item
 import paragraph_item
 from renderable_item import RenderableItem
+from url_decoder_github import GitHubRepositoryUrlDecoder
 from url_decoder_image import ImageUrlDecoder
 from url_decoder_twitter import TwitterTweetUrlDecoder
 from url_decoder_youtube import YouTubeUrlDecoder
@@ -32,4 +33,5 @@ def add_to_environment(environment):
   env_filters["istweet"] = _has_renderer(TwitterTweetUrlDecoder.name())
   env_filters["isyoutubevideo"] = _has_renderer(YouTubeUrlDecoder.name())
   env_filters["isalbum"] = _has_renderer(album_item._ALBUM_ITEM_TYPE)
+  env_filters["isgithubrepo"] = _has_renderer(GitHubRepositoryUrlDecoder.name())
 

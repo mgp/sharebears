@@ -9,6 +9,8 @@
     {{ _render_youtube_video(renderable_item.item, post_index, item_index) }}
   {% elif renderable_item|isalbum %}
     {{ _render_album(renderable_item.item) }}
+  {% elif renderable_item|isgithubrepo %}
+    {{ _render_github_repo(renderable_item.item) }}
   {% endif %}
 {%- endmacro %}
 
@@ -50,6 +52,31 @@
     {% for renderable_item in album.image_items %}
       <a href="{{ renderable_item.item.url }}"><img src="{{ renderable_item.item.url }}" /></a>
     {% endfor %}
+  </div>
+{%- endmacro %}
+
+{% macro _render_github_repo(repo) -%}
+  <div class="github-repo-card">
+    <div class="owner">
+      <img class="avatar" src="{{ repo.owner.avatar_url }}?s=95" />
+      <div class="username">
+        by <a href="{{ repo.owner.html_url }}">{{ repo.owner.login }}</a>
+      </div>
+    </div>
+    <div class="repo-details">
+      <div class="language">
+        {{ repo.language }}
+      </div>
+      <div class="title">
+        {{ repo.name }}
+      </div>
+      <div class="description">
+        {{ repo.description }}
+      </div>
+      <div class="actions">
+        <a href="{{ repo.html_url }}" class="button">View on GitHub</a>
+      </div>
+    </div>
   </div>
 {%- endmacro %}
 

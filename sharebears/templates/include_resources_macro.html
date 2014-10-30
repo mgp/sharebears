@@ -30,6 +30,10 @@
   {% if resource_summary.has_albums %}
     <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/magnific-popup.css") }}" />
   {% endif %}
+
+  {% if resource_summary.has_github_repos %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/github-repo-card.css") }}" />
+  {% endif %}
 {%- endmacro %}
 
 

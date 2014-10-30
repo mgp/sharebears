@@ -8,11 +8,13 @@ import authz
 import db
 from db import PaginatedSequence
 import filters
+from github_client import GitHubClient
 import json
 from post_processor import PostProcessor
 from renderable_item import RenderablePost
 import resource_summary
 import requests
+from url_decoder_github import GitHubRepositoryUrlDecoder
 from url_decoder_image import ImageUrlDecoder
 from url_decoder_twitter import TwitterTweetUrlDecoder
 from url_decoder_youtube import YouTubeUrlDecoder
@@ -23,7 +25,10 @@ filters.add_to_environment(app.jinja_env)
 
 def _get_post_processor():
   """Returns an PostProcessor configured with the default URL decoders."""
+  # TODO(mgp): Authenticate with GitHub.
+  github_client = GitHubClient(None, None)
   decoders = [
+      GitHubRepositoryUrlDecoder(github_client),
       ImageUrlDecoder(),
       TwitterTweetUrlDecoder(),
       YouTubeUrlDecoder()
