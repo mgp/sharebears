@@ -4,7 +4,7 @@ import urlparse
 from url_decoder import UrlDecoder
 
 
-_QUERY_REGEX = re.compile("^v=(?P<videoId>\w+)$")
+_QUERY_REGEX = re.compile("^v=(?P<videoId>[\w-]+)$")
 
 
 class YouTubeItem:
