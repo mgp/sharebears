@@ -27,7 +27,7 @@
     </script>
   {% endif %}
 
-  {% if resource_summary.has_albums %}
+  {% if resource_summary.has_images or resource_summary.has_albums %}
     <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/magnific-popup.css") }}" />
   {% endif %}
 
@@ -38,9 +38,27 @@
 
 
 {% macro include_body_resources(resource_summary) -%}
-  {% if resource_summary.has_albums %}
+  {% if resource_summary.has_images or resource_summary.has_albums %}
     <script src="{{ url_for("static", filename="js/jquery.magnific-popup.js") }}"></script>
+  {% endif %}
 
+  {% if resource_summary.has_images %}
+    <script>
+      $(document).ready(function() {
+        $('.image').magnificPopup({
+          type: "image",
+          closeOnContentClick: true,
+          closeBtnInside: true,
+          mainClass: 'mfp-img-mobile',
+          image: {
+            verticalFit: true
+          }
+        });
+      });
+    </script>
+  {% endif %}
+
+  {% if resource_summary.has_albums %}
     <!-- Derived from source for Zoom-gallery at http://dimsemenov.com/plugins/magnific-popup/ -->
     <script>
       $(document).ready(function() {

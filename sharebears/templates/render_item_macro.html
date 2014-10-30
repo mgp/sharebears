@@ -36,7 +36,9 @@
 {%- endmacro %}
 
 {% macro _render_image(image) -%}
-  <img src="{{ image.url }}" />
+  <a class="image" href="{{ image.url }}">
+    <img src="{{ image.url }}" />
+  </a>
 {%- endmacro %}
 
 {% macro _render_tweet(tweet) -%}

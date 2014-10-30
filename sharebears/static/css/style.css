@@ -76,9 +76,10 @@ header .site-title {
   border: 1px solid red;
 }
 
-/* Image album */
+/* Images and image albums */
+.post .image img,
 .post .image-album img {
-  max-width: 150px;
+  max-width: 200px;
   height: auto;
 }
 

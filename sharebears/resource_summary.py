@@ -1,4 +1,5 @@
 import album_item
+from url_decoder_image import ImageUrlDecoder
 from url_decoder_github import GitHubRepositoryUrlDecoder
 from url_decoder_twitter import TwitterTweetUrlDecoder
 from url_decoder_youtube import YouTubeUrlDecoder
@@ -8,15 +9,17 @@ class ResourceSummary:
   """The resource summary for one or more posts."""
 
   def __init__(self):
+    self.has_images = False
     self.has_tweets = False
     self.youtube_videos = []
     self.has_albums = False
     self.has_github_repos = False
 
   def __repr__(self):
-    return "ResourceSummary(has_tweets=%s, youtube_videos=%r, has_albums=%s, has_github_repos=%s)" % (
+    return "ResourceSummary(has_images=%s, has_tweets=%s, youtube_videos=%r, has_albums=%s, has_github_repos=%s)" % (
+        self.has_images,
         self.has_tweets,
-        self.youtube_ids,
+        self.youtube_videos,
         self.has_albums,
         self.has_github_repos)
 
@@ -26,7 +29,9 @@ def _update_summary_for_renderable_item(summary, renderable_item, post_index, it
   if renderer_name is None:
     return
 
-  if renderer_name == TwitterTweetUrlDecoder.name():
+  if renderer_name == ImageUrlDecoder.name():
+    summary.has_images = True
+  elif renderer_name == TwitterTweetUrlDecoder.name():
     summary.has_tweets = True
   elif renderer_name == YouTubeUrlDecoder.name():
     summary.youtube_videos.append((renderable_item.item.video_id, post_index, item_index))
