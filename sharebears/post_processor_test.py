@@ -43,9 +43,8 @@ class PostProcessorTest(unittest.TestCase):
   def test_process_only_text(self):
     string = "text0 text1"
     processed_post = self.processor.process(string)
-    self.assertEqual(2, len(processed_post.data))
-    self._assert_text_element(processed_post.data[0], "text0")
-    self._assert_text_element(processed_post.data[1], "text1")
+    self.assertEqual(1, len(processed_post.data))
+    self._assert_text_element(processed_post.data[0], string)
     self.assertEqual(0, len(processed_post.hash_tags))
 
   def test_process_only_hash_tags(self):

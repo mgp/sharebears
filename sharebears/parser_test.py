@@ -44,11 +44,10 @@ class ParserTest(unittest.TestCase):
     self.assertEqual(1, len(tokens))
     self._assert_text_token(tokens[0], "text0")
 
-    tokens = parser.parse("text0 text1 text2")
-    self.assertEqual(3, len(tokens))
-    self._assert_text_token(tokens[0], "text0")
-    self._assert_text_token(tokens[1], "text1")
-    self._assert_text_token(tokens[2], "text2")
+    text = "text0 text1 text2"
+    tokens = parser.parse(text)
+    self.assertEqual(1, len(tokens))
+    self._assert_text_token(tokens[0], text)
 
   def test_parse_only_urls(self):
     url0 = "http://url0"
