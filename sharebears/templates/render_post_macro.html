@@ -1,12 +1,12 @@
 {% from "render_item_macro.html" import render_item %}
 
-{% macro render_post(post) -%}
+{% macro render_post(post, post_index) -%}
   <div class="post">
     <div class="byline">by <a href="{{ url_for("posts_by_user", user_id=post.creator) }}">@{{ post.creator }}</a></div>
 
     <div class="content">
       {% for item in post.renderable_items %}
-        {{ render_item(item) }}
+        {{ render_item(item, post_index, loop.index0) }}
       {% endfor %}
     </div>
 

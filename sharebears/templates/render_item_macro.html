@@ -1,4 +1,4 @@
-{% macro render_item(renderable_item) -%}
+{% macro render_item(renderable_item, post_index, item_index) -%}
   {% if renderable_item|isparagraph %}
     {{ _render_paragraph(renderable_item.item) }}
   {% elif renderable_item|isimage %}
@@ -6,7 +6,7 @@
   {% elif renderable_item|istweet %}
     {{ _render_tweet(renderable_item.item) }}
   {% elif renderable_item|isyoutubevideo %}
-    {{ _render_youtube_video(renderable_item.item) }}
+    {{ _render_youtube_video(renderable_item.item, post_index, item_index) }}
   {% endif %}
 {%- endmacro %}
 
@@ -39,7 +39,7 @@
   <blockquote class="twitter-tweet" lang="en"><a href="{{ tweet.url }}"></a></blockquote>
 {%- endmacro %}
 
-{% macro _render_youtube_video(youtube_video) -%}
-  <div id="{{ youtube_video.video_id|youtubeplayerid }}"></div>
+{% macro _render_youtube_video(youtube_video, post_index, item_index) -%}
+  <div id="{{ youtube_video.video_id|youtubeplayerid(post_index, item_index) }}"></div>
 {%- endmacro %}
 

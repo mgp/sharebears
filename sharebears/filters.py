@@ -5,8 +5,8 @@ from url_decoder_twitter import TwitterTweetUrlDecoder
 from url_decoder_youtube import YouTubeUrlDecoder
 
 
-def _youtube_player_id(video_id):
-  return "ytplayer-%s" % video_id
+def _youtube_player_id(video_id, post_id=0, item_id=0):
+  return "ytplayer-%s-%s-%s" % (video_id, post_id, item_id)
 
 def _has_renderer(renderer_name):
   """Returns a function that returns whether a RendererItem has the given renderer name."""

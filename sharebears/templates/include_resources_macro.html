@@ -3,7 +3,7 @@
     <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
   {% endif %}
 
-  {% if resource_summary.youtube_video_ids %}
+  {% if resource_summary.youtube_videos %}
     <!-- From https://developers.google.com/youtube/player_parameters#IFrame_Player_API -->
     <script>
       // Load the IFrame Player API code asynchronously.
@@ -20,8 +20,8 @@
         });
       }
       function onYouTubePlayerAPIReady() {
-        {% for video_id in resource_summary.youtube_video_ids %}
-          createPlayer("{{ video_id }}", "{{ video_id|youtubeplayerid }}");
+        {% for video_id, post_index, item_index in resource_summary.youtube_videos %}
+          createPlayer("{{ video_id }}", "{{ video_id|youtubeplayerid(post_index, item_index) }}");
         {% endfor %}
       }
     </script>

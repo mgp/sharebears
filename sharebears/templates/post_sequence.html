@@ -7,7 +7,7 @@
 
   <ol class="post-sequence">
     {% for post in posts %}
-      {{ render_post(post) }}
+      {{ render_post(post, loop.index0) }}
     {% endfor %}
   </ol>
 {% endblock content %}
