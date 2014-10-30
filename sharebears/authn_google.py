@@ -38,15 +38,17 @@ def _get_client_json(access_token):
   response = requests.get("https://www.googleapis.com/oauth2/v1/userinfo", headers=headers)
   response_json = response.json()
 
-  google_id = response_json["id"]
   domain = response_json["hd"]
   if domain != app.config["GOOGLE_APP_DOMAIN"]:
     # This user is not part of this organization's domain.
     return None
 
+  google_id = response_json["id"]
+  displayed_name = response_json["email"]
   client = {
     "auth_method": "google",
-    "user_id": "google:%s" % google_id
+    "user_id": "google:%s" % google_id,
+    "displayed_name": displayed_name
   }
   return client
 

@@ -9,6 +9,7 @@ def _get_client_values(client):
   flask.g.logged_in = True
   flask.g.auth_method = client["auth_method"]
   flask.g.user_id = client["user_id"]
+  flask.g.displayed_name = client["displayed_name"]
 
 
 def login_required(f):
@@ -51,6 +52,7 @@ def login_optional(f):
       flask.g.logged_in = False
       flask.g.auth_method = None
       flask.g.user_id = None
+      flask.g.displayed_name = None
 
     flask.g.page_name = page_name
     return f(*pargs, **kwargs)
