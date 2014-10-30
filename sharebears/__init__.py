@@ -2,9 +2,9 @@ from flask import Flask
 
 app = Flask(__name__.split('.')[0])
 
-# Import the configuration.
+# Configure the app.
 import configuration
-app.config.from_object(configuration.from_environment())
+configuration.configure_app(app)
 
 # Remove some whitespace from the HTML.
 app.jinja_env.trim_blocks = app.config['JINJA_TRIM_BLOCKS']

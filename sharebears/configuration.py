@@ -12,12 +12,12 @@ class DevelopmentConfiguration(Configuration):
   DATABASE_NAME = "sqlite"
   DATABASE_URI = "sqlite://"
 
-  GOOGLE_CLIENT_ID = "908613102039-379d2f5q3u6odqk0dfi200d2ha6hh768.apps.googleusercontent.com"
-  GOOGLE_CLIENT_SECRET = "IrhXmcoqgu3X6FlKV8nN3tov"
   GOOGLE_APP_DOMAIN = "khanacademy.org"
 
 
-def from_environment():
-  # TODO: Return prod vs dev configuration based on environment variable.
-  return DevelopmentConfiguration
+def configure_app(app):
+  # TODO: Use prod vs dev configuration based on environment variable.
+  app.config.from_object(DevelopmentConfiguration)
+
+  app.config.from_pyfile("../third_party_secrets.flask_cfg")
 
