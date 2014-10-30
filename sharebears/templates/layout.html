@@ -14,38 +14,21 @@
 
   <body>
     <header class="clearfix">
-      {% if g.logged_in %}
-        <div id="user-options">
-          <span id="username">{{ g.username }}</span>
-          <nav>
-            <a href="{{ url_for('logout') }}">Log out</a>
-          </nav>
-        </div>
-      {% else %}
+      <div id="user-options">
+        <span id="username">{{ g.username }}</span>
         <nav>
-          <a href="{{ url_for('log_in_google') }}">Log in with Google</a>
+          <a href="{{ url_for('logout') }}">Log out</a>
         </nav>
-      {% endif %}
+      </div>
 
       <h1><a href="{{ url_for('posts') }}">Sharebears</a></h1>
     </header>
 
     <main class="clearfix">
-      <!--
-      <div id="sidebar">
-      </div>
-      -->
       <div id="content">
         {% block content %}{% endblock content %}
       </div>
     </main>
-
-    <!--
-    <footer>
-      <nav>
-      </nav>
-    </footer>
-    -->
 
     <script type="text/javascript" src="//code.jquery.com/jquery-1.11.1.js"></script>
     {% if resource_summary %}

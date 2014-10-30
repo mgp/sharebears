@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Sign In - Sharebears</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/webfont.css") }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/style.css") }}" />
+  </head>
+
+  <body>
+    <main class="sign-in-prompt">
+      <a class="page-logo" href="http://khanacademy.org"></a>
+      <h2 class="page-title">Share Bears</h2>
+      <a class="sign-in-google" href="{{ url_for('log_in_google') }}"></a>
+    </main>
+  </body>
+</html>
+

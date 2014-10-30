@@ -60,11 +60,14 @@ def _get_renderable_post_sequence(post_sequence):
 @app.route('/', methods=["GET"])
 @authz.login_optional
 def posts():
-  all_posts = db.get_posts()
-  renderable_all_posts = _get_renderable_post_sequence(all_posts)
-  summary = resource_summary.summary_for_renderable_post_sequence(renderable_all_posts)
-  return flask.render_template("all_posts.html",
-      posts=renderable_all_posts, resource_summary=summary)
+  if flask.g.logged_in:
+    all_posts = db.get_posts()
+    renderable_all_posts = _get_renderable_post_sequence(all_posts)
+    summary = resource_summary.summary_for_renderable_post_sequence(renderable_all_posts)
+    return flask.render_template("all_posts.html",
+        posts=renderable_all_posts, resource_summary=summary)
+  else:
+    return flask.render_template("sign_in.html")
 
 
 def _add_post(user_id, text):
