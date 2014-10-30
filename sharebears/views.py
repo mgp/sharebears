@@ -1,4 +1,6 @@
+from datetime import datetime
 import flask
+import json
 import requests
 
 from sharebears import app
@@ -9,11 +11,9 @@ import db
 from db import PaginatedSequence
 import filters
 from github_client import GitHubClient
-import json
 from post_processor import PostProcessor
 from renderable_item import RenderablePost
 import resource_summary
-import requests
 from url_decoder_github import GitHubRepositoryUrlDecoder
 from url_decoder_image import ImageUrlDecoder
 from url_decoder_twitter import TwitterTweetUrlDecoder
@@ -64,8 +64,9 @@ def posts():
     all_posts = db.get_posts()
     renderable_all_posts = _get_renderable_post_sequence(all_posts)
     summary = resource_summary.summary_for_renderable_post_sequence(renderable_all_posts)
+    now = datetime.utcnow()
     return flask.render_template("all_posts.html",
-        posts=renderable_all_posts, resource_summary=summary)
+        posts=renderable_all_posts, resource_summary=summary, now_datetime=now)
   else:
     return flask.render_template("sign_in.html")
 
@@ -113,7 +114,8 @@ def post(post_id):
 
   renderable_post = _get_renderable_post(post)
   summary = resource_summary.summary_for_renderable_post(renderable_post)
-  return flask.render_template("post.html", post=renderable_post, resource_summary=summary)
+  now = datetime.utcnow()
+  return flask.render_template("post.html", post=renderable_post, resource_summary=summary, now_datetime=now)
 
 
 @app.route("%s/stars" % _POST_PATH)
@@ -143,8 +145,9 @@ def posts_with_hashtag(hash_tag):
   hash_tag_posts = db.get_posts_with_hashtag(hash_tag)
   renderable_hash_tag_posts = _get_renderable_post_sequence(hash_tag_posts)
   summary = resource_summary.summary_for_renderable_post_sequence(renderable_hash_tag_posts)
+  now = datetime.utcnow()
   return flask.render_template("hashtag_posts.html",
-      hash_tag=hash_tag, posts=renderable_hash_tag_posts, resource_summary=summary)
+      hash_tag=hash_tag, posts=renderable_hash_tag_posts, resource_summary=summary, now_datetime=now)
 
 
 @app.route("/user/<user_id>")
@@ -153,8 +156,9 @@ def posts_by_user(user_id):
   user_posts = db.get_posts_by_user(user_id)
   renderable_user_posts = _get_renderable_post_sequence(user_posts)
   summary = resource_summary.summary_for_renderable_post_sequence(renderable_user_posts)
+  now = datetime.utcnow()
   return flask.render_template("user_posts.html",
-      user_id=user_id, posts=renderable_user_posts, resource_summary=summary)
+      user_id=user_id, posts=renderable_user_posts, resource_summary=summary, now_datetime=now)
 
 
 @app.route("/logout")

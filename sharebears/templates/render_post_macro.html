@@ -1,8 +1,13 @@
 {% from "render_item_macro.html" import render_item %}
 
-{% macro render_post(post, post_index) -%}
+{% macro render_post(post, now_datetime, post_index) -%}
   <div class="post">
-    <div class="byline">by <a href="{{ url_for("posts_by_user", user_id=post.creator) }}">@{{ post.creator }}</a></div>
+    <div class="byline">
+      by
+      <a href="{{ url_for("posts_by_user", user_id=post.creator) }}">@{{ post.creator }}</a>
+      &middot
+      <a href="{{ url_for("post", post_id=post.id) }}">{{ post.created_datetime|timeagostring(now_datetime) }}</a>
+    </div>
 
     <div class="content">
       {% for item in post.renderable_items %}
