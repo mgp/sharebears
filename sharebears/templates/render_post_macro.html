@@ -13,7 +13,7 @@
     {% if post.hash_tags %}
       <ul class="hash-tags">
         {% for hash_tag in post.hash_tags %}
-          <li><a href="{{ url_for("posts_with_hashtag", hash_tag=hash_tag) }}">#{{ hash_tag }}</li>
+          <li><a href="{{ url_for("posts_with_hashtag", hash_tag=hash_tag) }}">#{{ hash_tag }}</a></li>
         {% endfor %}
       </ul>
     {% endif %}
