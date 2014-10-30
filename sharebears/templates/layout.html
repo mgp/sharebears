@@ -1,4 +1,4 @@
-{% from "include_resources_macro.html" import include_resources %}
+{% from "include_resources_macro.html" import include_head_resources, include_body_resources %}
 
 <!doctype html>
 <html lang="en">
@@ -6,7 +6,7 @@
     {% block head %}{% endblock head %}
     <title>{% block title %}{% block page_name %}{% endblock page_name %} - Sharebears{% endblock title %}</title>
     {% if resource_summary %}
-      {{ include_resources(resource_summary) }}
+      {{ include_head_resources(resource_summary) }}
     {% endif %}
   </head>
 
@@ -44,6 +44,10 @@
       </nav>
     </footer>
     -->
+
+    {% if resource_summary %}
+      {{ include_body_resources(resource_summary) }}
+    {% endif %}
   </body>
 </html>
 
