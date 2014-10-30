@@ -3,7 +3,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <h3>{% block sequence_header %}{% endblock sequence_header %}</h3>
+  <h3 class="post-sequence-title">{% block sequence_header %}{% endblock sequence_header %}</h2>
 
   <ol class="post-sequence">
     {% for post in posts %}
