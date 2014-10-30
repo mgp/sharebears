@@ -9,7 +9,7 @@ import requests
 from sharebears import app
 
 
-_GOOGLE_REDIRECT_URI = "/log_in_google_complete"
+_GOOGLE_REDIRECT_URI = "/sign_in_google_complete"
 
 _oauth = OAuth()
 _google = _oauth.remote_app("google",
@@ -27,9 +27,9 @@ _google = _oauth.remote_app("google",
     consumer_secret=app.config["GOOGLE_CLIENT_SECRET"])
 
 
-@app.route("/log_in_google")
-def log_in_google():
-  callback=flask.url_for("log_in_google_complete", _external=True)
+@app.route("/sign_in_google")
+def sign_in_google():
+  callback=flask.url_for("sign_in_google_complete", _external=True)
   return _google.authorize(callback=callback)
 
 
@@ -53,7 +53,7 @@ def _get_client_json(access_token):
 
 @app.route(_GOOGLE_REDIRECT_URI)
 @_google.authorized_handler
-def log_in_google_complete(response):
+def sign_in_google_complete(response):
   access_token = response["access_token"]
   client = _get_client_json(access_token)
   if not client:
