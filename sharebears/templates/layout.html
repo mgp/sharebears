@@ -14,14 +14,12 @@
 
   <body>
     <header class="clearfix">
-      <div id="user-options">
-        <span id="username">{{ g.username }}</span>
-        <nav>
-          <a href="{{ url_for('logout') }}">Log out</a>
-        </nav>
+      <div class="user">
+        <span id="name">{{ g.displayed_name }}</span><br />
+        <a href="{{ url_for('logout') }}">Log out</a>
       </div>
 
-      <h1><a href="{{ url_for('posts') }}">Sharebears</a></h1>
+      <a href="{{ url_for('posts') }}"><h3 class="page-title">Share Bears</h3></a>
     </header>
 
     <main class="clearfix">

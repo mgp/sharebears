@@ -1,12 +1,45 @@
+/* Layout */
+body {
+    background-color: #eee;
+    font-family: 'proxima_nova_rgregular';
+}
+header,
+main {
+  width: 800px;
+  margin: 0 auto;
+}
+.page-title {
+  text-transform: uppercase;
+  color: rgb(151, 174, 55);
+  font-size: 2em;
+  letter-spacing: 4px;
+}
+a {
+  text-decoration: none;
+  color: rgb(151, 174, 55);
+}
+a:hover {
+  opacity: 0.6;
+}
+
+
+/* Header */
+header .page-title {
+  display: inline;
+}
+/* User info in header */
+.user {
+  float: right;
+  text-align: right;
+}
+
+
+/* Image album */
 .post .image-album img {
   max-width: 150px;
   height: auto;
 }
 
-body {
-    background-color: #eee;
-    font-family: 'proxima_nova_rgregular';
-}
 
 /* Sign in screen */
 .sign-in-prompt {
@@ -15,28 +48,25 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-
 .page-logo,
 .sign-in-google {
-    display: block;
-    margin: 0 auto;
-    background-size: contain;
+  display: block;
+  margin: 0 auto;
+  background-size: contain;
 }
 .page-logo {
-    width: 249px;
-    height: 27px;
-    background-image: url('../images/ka-logo.png');
+  width: 249px;
+  height: 27px;
+  background-image: url('../images/ka-logo.png');
 }
-.page-title {
-    text-align: center;
-    text-transform: uppercase;
-    color: rgb(151, 174, 55);
-    font-size: 2.5em;
-    letter-spacing: 5px;
+.sign-in-prompt .page-title {
+  text-align: center;
+  font-size: 2.5em;
+  letter-spacing: 5px;
 }
 .sign-in-google {
-    width: 225px;
-    height: 49px;
-    background-image: url('../images/sign-in-with-google.png');
+  width: 225px;
+  height: 49px;
+  background-image: url('../images/sign-in-with-google.png');
 }
 
