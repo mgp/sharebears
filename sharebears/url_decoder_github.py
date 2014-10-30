@@ -28,11 +28,7 @@ class GitHubRepositoryItem:
     self.name = decoded_url["name"]
     self.description = decoded_url["description"]
     self.html_url = decoded_url["html_url"]
-    self.forks_count = decoded_url["forks_count"]
-    self.stargazers_count = decoded_url["stargazers_count"]
-    self.watchers_count = decoded_url["watchers_count"]
-    self.created_at = url_decoder.to_datetime(decoded_url["created_at"])
-    self.updated_at = url_decoder.to_datetime(decoded_url["updated_at"])
+    self.language = decoded_url["language"]
 
     self.owner = GitHubRepositoryOwnerItem(decoded_url["owner"])
 
@@ -74,11 +70,7 @@ class GitHubRepositoryUrlDecoder(_GitHubUrlDecoder):
         "name",
         "description",
         "html_url",
-        "forks_count",
-        "stargazers_count",
-        "watchers_count",
-        "created_at",
-        "updated_at")
+        "language")
 
     filtered_json["owner"] = filtered_owner_json
     return filtered_json

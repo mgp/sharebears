@@ -66,11 +66,7 @@ class GitHubRepositoryUrlDecoderTest(UrlDecoderTestCase):
         "name": "name-value",
         "description": "description-value",
         "html_url": "html_url-value",
-        "forks_count": 1,
-        "stargazers_count": 2,
-        "watchers_count": 3,
-        "created_at": "2011-01-26T19:01:12Z",
-        "updated_at": "2012-02-27T20:02:13Z",
+        "language": "language-value",
         "owner": owner_json
     }
     item = self.url_decoder.item_for_rendering(decoded_url)
@@ -78,13 +74,7 @@ class GitHubRepositoryUrlDecoderTest(UrlDecoderTestCase):
     self.assertEqual(decoded_url["name"], item.name)
     self.assertEqual(decoded_url["description"], item.description)
     self.assertEqual(decoded_url["html_url"], item.html_url)
-    self.assertEqual(decoded_url["forks_count"], item.forks_count)
-    self.assertEqual(decoded_url["stargazers_count"], item.stargazers_count)
-
-    expected_datetime = url_decoder.to_datetime(decoded_url["created_at"])
-    self.assertEqual(expected_datetime, item.created_at)
-    expected_datetime = url_decoder.to_datetime(decoded_url["updated_at"])
-    self.assertEqual(expected_datetime, item.updated_at)
+    self.assertEqual(decoded_url["language"], item.language)
 
     # Assert that the GitHubRepositoryOwnerItem instance is correct.
     owner = item.owner
