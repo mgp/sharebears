@@ -81,9 +81,9 @@ def _add_post(user_id, text):
   return post_id
 
 
+# TODO(mgp): Properly auth this.
 _POSTS_PATH = "/posts"
 @app.route(_POSTS_PATH, methods=["POST"])
-@authz.login_required
 def add_post():
   request_form = flask.request.form
   user_id = request_form["user_id"]
