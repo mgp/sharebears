@@ -21,6 +21,21 @@ class ParserTest(unittest.TestCase):
   def _join(self, *values):
     return " ".join(values)
 
+  def test_is_url(self):
+    self.assertFalse(parser._is_url("token"))
+
+    # Test prefixes.
+    self.assertTrue(parser._is_url("http://foo"))
+    self.assertTrue(parser._is_url("https://foo"))
+    self.assertFalse(parser._is_url("unknownscheme://foo"))
+    self.assertTrue(parser._is_url("www.foo"))
+    self.assertFalse(parser._is_url("xxx.foo"))
+
+    # Test TLDs as suffixes.
+    self.assertTrue(parser._is_url("foo.com"))
+    self.assertTrue(parser._is_url("foo.com/"))
+    self.assertFalse(parser._is_url("foo.com$"))
+
   def test_parse_empty(self):
     tokens = parser.parse("")
     self.assertEqual(0, len(tokens))

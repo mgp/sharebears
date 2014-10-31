@@ -25,10 +25,24 @@ class Token:
     return Token(Token.HASH_TAG, value)
 
 
+_URL_PREFIXES = ["http://", "https://", "www."]
+_TLDS = ["biz", "ca", "co", "co.uk", "com", "de", "edu", "es", "eu", "gov", "info", "io", "me", "mobi", "net", "org", "us"]
+_URL_SUFFIXES = []
+for tld in _TLDS:
+  _URL_SUFFIXES.append(".%s" % tld)
+  _URL_SUFFIXES.append(".%s/" % tld)
+
 def _is_url(token_string):
   # Can use something more complicated like
   # https://github.com/django/django/blob/695956376ff09b0d6fd5c438f912b9eb05459145/django/core/validators.py#L68
-  return token_string.startswith("http://") or token_string.startswith("https://")
+  for url_prefix in _URL_PREFIXES:
+    if token_string.startswith(url_prefix):
+      return True
+  for url_prefix in _URL_SUFFIXES:
+    if token_string.endswith(url_prefix):
+      return True
+  return False
+
 
 def parse(string):
   """Parses the given string as a list of Token instances."""
