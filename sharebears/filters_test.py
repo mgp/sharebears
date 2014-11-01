@@ -16,17 +16,6 @@ class FiltersTest(unittest.TestCase):
     self.assertEqual(expected_string, filters._get_time_ago_string(created_datetime, now))
 
 
-  def test_is_decoded_type(self):
-    type_filter = filters._is_decoded_type(_FiltersTestDecoder)
-    filter_name = _FiltersTestDecoder.name()
-
-    # Pass an URL with a different filter name.
-    renderable_url = RenderableItem("different-decoder-name", None)
-    self.assertFalse(type_filter(renderable_url))
-    # Pass an URL with the same filter name.
-    renderable_url = RenderableItem(filter_name, None)
-    self.assertTrue(type_filter(renderable_url))
-
   def test_time_ago_string(self):
     now = datetime(2014, 10, 27, 9, 15, 45)
 

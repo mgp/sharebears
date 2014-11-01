@@ -14,11 +14,6 @@ def _has_renderer(renderer_name):
   """Returns a function that returns whether a RendererItem has the given renderer name."""
   return lambda item: item.get_renderer_name() == renderer_name
 
-def _is_decoded_type(decoder_type):
-  # name must be a static method.
-  decoder_name = decoder_type.name()
-  return lambda arg: arg.type == decoder_name
-
 
 _SECONDS_PER_HOUR = 60 * 60
 _SECONDS_PER_MINUTE = 60
