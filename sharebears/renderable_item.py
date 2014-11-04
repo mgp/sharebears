@@ -39,20 +39,22 @@ class RenderableItem:
 class RenderablePost:
   """A post that is ready for rendering."""
 
-  def __init__(self, id, creator, created_datetime, renderable_items, num_stars, hash_tags):
+  def __init__(self, id, creator, created_datetime, renderable_items, is_starred, num_stars, hash_tags):
     self.id = id
     self.creator = creator
     self.created_datetime = created_datetime
     self.renderable_items = renderable_items
+    self.is_starred = is_starred
     self.num_stars = num_stars
     self.hash_tags = hash_tags
 
   def __repr__(self):
-    return "RenderablePost(id=%r, creator=%r, created=%r, items=%r, num_stars=%r, hash_tags=%r)" % (
+    return "RenderablePost(id=%r, creator=%r, created=%r, items=%r, is_starred=%r, num_stars=%r, hash_tags=%r)" % (
         self.id,
         self.creator,
         self.created_datetime,
         self.renderable_items,
+        self.is_starred,
         self.num_stars,
         self.hash_tags)
 

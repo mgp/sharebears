@@ -45,6 +45,7 @@ def _get_renderable_post(post):
       post.creator,
       post.created_datetime,
       renderable_items,
+      post.is_starred,
       post.num_stars,
       post.hash_tags)
 
@@ -60,7 +61,7 @@ def _get_renderable_post_sequence(post_sequence):
 @authz.login_optional
 def posts():
   if flask.g.logged_in:
-    all_posts = db.get_posts()
+    all_posts = db.get_posts(flask.g.user_id)
     renderable_all_posts = _get_renderable_post_sequence(all_posts)
     summary = resource_summary.summary_for_renderable_post_sequence(renderable_all_posts)
     now = datetime.utcnow()
@@ -107,7 +108,7 @@ _POST_PATH = "%s/<post_id>" % _POSTS_PATH
 @app.route(_POST_PATH)
 @authz.login_required
 def post(post_id):
-  post = db.get_post(post_id)
+  post = db.get_post(flask.g.user_id, post_id)
   if not post:
     flask.abort(requests.codes.not_found)
 
@@ -141,7 +142,7 @@ def unstar(post_id):
 @app.route("/hashtag/<hash_tag>")
 @authz.login_required
 def posts_with_hashtag(hash_tag):
-  hash_tag_posts = db.get_posts_with_hashtag(hash_tag)
+  hash_tag_posts = db.get_posts_with_hashtag(flask.g.user_id, hash_tag)
   renderable_hash_tag_posts = _get_renderable_post_sequence(hash_tag_posts)
   summary = resource_summary.summary_for_renderable_post_sequence(renderable_hash_tag_posts)
   now = datetime.utcnow()
@@ -152,7 +153,7 @@ def posts_with_hashtag(hash_tag):
 @app.route("/user/<user_id>")
 @authz.login_required
 def posts_by_user(user_id):
-  user_posts = db.get_posts_by_user(user_id)
+  user_posts = db.get_posts_by_user(flask.g.user_id, user_id)
   renderable_user_posts = _get_renderable_post_sequence(user_posts)
   summary = resource_summary.summary_for_renderable_post_sequence(renderable_user_posts)
   now = datetime.utcnow()

@@ -37,6 +37,8 @@ class DbTest(unittest.TestCase):
     unittest.TestCase.setUp(self)
     db_schema.create_all_tables(DbTest._engine)
 
+    self.client_id = "client_id"
+
   def tearDown(self):
     db_schema.drop_all_tables(DbTest._engine)
     unittest.TestCase.tearDown(self)
@@ -50,7 +52,7 @@ class DbTest(unittest.TestCase):
     self.assertIsNotNone(post_id)
     return post_id
 
-  def _assert_post(self, insert_data, actual_post, expected_num_stars=0):
+  def _assert_post(self, insert_data, actual_post, expected_is_starred=False, expected_num_stars=0):
     """Asserts that the given Post contains the given PostInsertData."""
 
     self.assertIsNotNone(insert_data)
@@ -61,12 +63,14 @@ class DbTest(unittest.TestCase):
     self.assertEqual(insert_data.now, actual_post.created_datetime)
     self.assertEqual(insert_data.data, actual_post.data)
     self.assertSequenceEqual(insert_data.hash_tags, actual_post.hash_tags)
+
+    self.assertEqual(expected_is_starred, actual_post.is_starred)
     self.assertEqual(expected_num_stars, actual_post.num_stars)
 
   def _assert_stars(self, post_id, expected_stars):
     """Asserts that the post with the given identifier has the given stars."""
 
-    post = db.get_post(post_id)
+    post = db.get_post(self.client_id, post_id)
     self.assertIsNotNone(post)
     self.assertEqual(len(expected_stars), post.num_stars)
 
@@ -76,7 +80,7 @@ class DbTest(unittest.TestCase):
 
   def test_get_missing_post(self):
     missing_post_id = "missing_post_id"
-    post = db.get_post(missing_post_id)
+    post = db.get_post(self.client_id, missing_post_id)
     self.assertIsNone(post)
 
 
@@ -93,12 +97,12 @@ class DbTest(unittest.TestCase):
     post_id2 = self._add_post(insert_data2)
 
     # Assert that the first post is read correctly.
-    self._assert_post(insert_data1, db.get_post(post_id1), 0)
+    self._assert_post(insert_data1, db.get_post(self.client_id, post_id1))
     # Assert that the second post is read correctly.
-    self._assert_post(insert_data2, db.get_post(post_id2), 0)
+    self._assert_post(insert_data2, db.get_post(self.client_id, post_id2))
 
     # Get both posts.
-    all_posts = db.get_posts()
+    all_posts = db.get_posts(self.client_id)
     self.assertEqual(2, len(all_posts))
     # Assert that the second post is returned first because it is more recent.
     self._assert_post(insert_data2, all_posts[0], 0)
@@ -123,16 +127,16 @@ class DbTest(unittest.TestCase):
     post_id2 = self._add_post(insert_data2)
 
     # Only the first post has the first hash tag.
-    hash_tag_posts = db.get_posts_with_hashtag(hash_tag1)
+    hash_tag_posts = db.get_posts_with_hashtag(self.client_id, hash_tag1)
     self.assertEqual(1, len(hash_tag_posts))
     self._assert_post(insert_data1, hash_tag_posts[0], 0)
     # Only the second post has the third hash tag.
-    hash_tag_posts = db.get_posts_with_hashtag(hash_tag3)
+    hash_tag_posts = db.get_posts_with_hashtag(self.client_id, hash_tag3)
     self.assertEqual(1, len(hash_tag_posts))
     self._assert_post(insert_data2, hash_tag_posts[0], 0)
 
     # Both posts have the second hash tag. Assert ordering from most recent to least recent.
-    hash_tag_posts = db.get_posts_with_hashtag(hash_tag2)
+    hash_tag_posts = db.get_posts_with_hashtag(self.client_id, hash_tag2)
     self.assertEqual(2, len(hash_tag_posts))
     self._assert_post(insert_data2, hash_tag_posts[0], 0)
     self._assert_post(insert_data1, hash_tag_posts[1], 0)
@@ -143,7 +147,7 @@ class DbTest(unittest.TestCase):
     insert_data = PostInsertData("user_id1", "data1", ["hash_tag"], now)
     post_id = self._add_post(insert_data)
  
-    hash_tag_posts = db.get_posts_with_hashtag("missing_hashtag")
+    hash_tag_posts = db.get_posts_with_hashtag(self.client_id, "missing_hashtag")
     self.assertEqual(0, len(hash_tag_posts))
 
 
@@ -165,7 +169,7 @@ class DbTest(unittest.TestCase):
     post_id3 = self._add_post(insert_data3)
 
     # Get both posts for the first user.
-    user_posts = db.get_posts_by_user(user_id1)
+    user_posts = db.get_posts_by_user(self.client_id, user_id1)
     self.assertEqual(2, len(user_posts))
     # Assert that the third post is returned first because it is more recent.
     self._assert_post(insert_data3, user_posts[0], 0)
@@ -173,7 +177,7 @@ class DbTest(unittest.TestCase):
     self._assert_post(insert_data1, user_posts[1], 0)
 
     # Get the post for the second user.
-    user_posts = db.get_posts_by_user(user_id2)
+    user_posts = db.get_posts_by_user(self.client_id, user_id2)
     self.assertEqual(1, len(user_posts))
     self._assert_post(insert_data2, user_posts[0], 0)
 
@@ -183,41 +187,65 @@ class DbTest(unittest.TestCase):
     insert_data1 = PostInsertData("user_id1", "data1", ["hash_tag"], now1)
     post_id = self._add_post(insert_data1)
 
-    user_posts = db.get_posts_by_user("missing_user_id")
+    user_posts = db.get_posts_by_user(self.client_id, "missing_user_id")
     self.assertEqual(0, len(user_posts))
 
 
   def test_get_stars(self):
     user_id1 = "user_id1"
     user_id2 = "user_id2"
+    hash_tag = "hash_tag"
 
+    creator_id = "creator_id"
     # Write the first post by a user.
     insert_now1 = datetime(2010, 6, 23)
-    insert_data1 = PostInsertData(user_id1, "data1", ["hash_tag1"], insert_now1)
+    insert_data1 = PostInsertData(creator_id, "data1", [hash_tag], insert_now1)
     post_id1 = self._add_post(insert_data1)
-    # Write the second post by another user.
+    # Write the second post by a user.
     insert_now2 = datetime(2011, 7, 24)
-    insert_data2 = PostInsertData(user_id2, "data2", ["hash_tag2"], insert_now2)
+    insert_data2 = PostInsertData(creator_id, "data2", [hash_tag], insert_now2)
     post_id2 = self._add_post(insert_data2)
 
     # The first user stars the first post.
     starred_now1 = datetime(2012, 8, 25)
     db.star_post(user_id1, post_id1, starred_now1)
-    self._assert_post(insert_data1, db.get_post(post_id1), 1)
+    self._assert_post(insert_data1, db.get_post(user_id1, post_id1), True, 1)
+    self._assert_post(insert_data1, db.get_post(user_id2, post_id1), False, 1)
     # The second user stars the first post.
     starred_now2 = datetime(2013, 9, 26)
     db.star_post(user_id2, post_id1, starred_now2)
-    self._assert_post(insert_data1, db.get_post(post_id1), 2)
+    self._assert_post(insert_data1, db.get_post(user_id1, post_id1), True, 2)
+    self._assert_post(insert_data1, db.get_post(user_id2, post_id1), True, 2)
     # The first user stars the second post.
     starred_now3 = datetime(2014, 10, 27)
     db.star_post(user_id1, post_id2, starred_now3)
-    self._assert_post(insert_data2, db.get_post(post_id2), 1)
+    self._assert_post(insert_data2, db.get_post(user_id1, post_id2), True, 1)
+    self._assert_post(insert_data2, db.get_post(user_id2, post_id2), False, 1)
 
     # Get both stars for the first post.
     # Assert that the second user is returned first because its star is more recent.
     self._assert_stars(post_id1, [user_id2, user_id1])
     # Assert that the second post is starred only by the first user.
     self._assert_stars(post_id2, [user_id1])
+
+    def _assert_user_id1_posts(user_id1_posts):
+      self.assertEqual(2, len(user_id1_posts))
+      self._assert_post(insert_data2, user_id1_posts[0], True, 1)
+      self._assert_post(insert_data1, user_id1_posts[1], True, 2)
+    def _assert_user_id2_posts(user_id2_posts):
+      self.assertEqual(2, len(user_id2_posts))
+      self._assert_post(insert_data2, user_id2_posts[0], False, 1)
+      self._assert_post(insert_data1, user_id2_posts[1], True, 2)
+
+    # Assert that the stars are seen by each user for all posts.
+    _assert_user_id1_posts(db.get_posts(user_id1))
+    _assert_user_id2_posts(db.get_posts(user_id2))
+    # Assert that the stars are seen by each user for all posts with a hash tag.
+    _assert_user_id1_posts(db.get_posts_with_hashtag(user_id1, hash_tag))
+    _assert_user_id2_posts(db.get_posts_with_hashtag(user_id2, hash_tag))
+    # Assert that the stars are seen by each user for all posts by a given user.
+    _assert_user_id1_posts(db.get_posts_by_user(user_id1, creator_id))
+    _assert_user_id2_posts(db.get_posts_by_user(user_id2, creator_id))
 
 
   def test_star_missing_post(self):
@@ -236,12 +264,12 @@ class DbTest(unittest.TestCase):
     # The user stars the post.
     now1 = datetime(2012, 8, 25)
     db.star_post(user_id1, post_id, now1)
-    self._assert_post(insert_data, db.get_post(post_id), 1)
+    self._assert_post(insert_data, db.get_post(user_id1, post_id), True, 1)
     
     # The user stars the post again. Assert that its num_stars value is unchanged.
     now2 = datetime(2013, 9, 26)
     db.star_post(user_id1, post_id, now2)
-    self._assert_post(insert_data, db.get_post(post_id), 1)
+    self._assert_post(insert_data, db.get_post(user_id1, post_id), True, 1)
 
 
   def test_unstar_post(self):
@@ -292,7 +320,7 @@ class DbTest(unittest.TestCase):
     # The user unstars a post that is not starred. Assert that its num_stars value is unchanged.
     unstar_now = datetime(2012, 8, 25)
     db.unstar_post(user_id1, post_id, unstar_now)
-    self._assert_post(insert_data, db.get_post(post_id), 0)
+    self._assert_post(insert_data, db.get_post(user_id1, post_id), False, 0)
 
 
 def suite():
